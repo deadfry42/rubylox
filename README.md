@@ -16,3 +16,6 @@ https://discord.gg/RfHFJ59khG
 ## This project is incredibly incomplete
 I only started a few days ago (as of 5th July 2023)
 This means that literately only a few hundred lines are actually written.
+
+### THIS IS NOT A DIRECT PORT
+Exactly porting Pokemon Ruby to Roblox is basically impossible. It would be, theoretically, but there are features like proper image masking that Roblox simply doesn't support. I started this project to see if i could challenge myself with these limitations. (Yes, I know roblox is capable of a lot of things, but it is primarily a 3D engine, not a 2D one)
