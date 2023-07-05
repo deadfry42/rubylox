@@ -10,6 +10,7 @@ local triggers = script.Triggers
 --[[
 things to fix (at a later date):
  - logo_shine not properly masking onto pokemon_ruby.png
+ - fix how goofy the title screen looks
 ]]
 
 local start = false
@@ -35,6 +36,18 @@ local function genericColorTween(obj, newclr, clk, callback)
 		local cy = (newclr.G-base.g)/clk
 		local cz = (newclr.B-base.b)/clk
 		obj.BackgroundColor3 = Color3.new(base.r+(cx*i), base.g+(cy*i), base.b+(cz*i))
+	end
+	pcall(callback)
+end
+
+local function genericPosXTween(obj, newx, clk, callback)
+	local base = {} base.x = (obj.Position.X.Scale)
+	for i=1, clk do
+		wait()
+		print((newx/maxX))
+		local cx = ((newx/maxX)-base.x)/clk
+		print(cx)
+		obj.Position = obj.Position + UDim2.new(cx, 0, 0, 0)
 	end
 	pcall(callback)
 end
@@ -140,11 +153,13 @@ end
 local function playTheGame()
 	while began == false do
 		clearGraphics()
+		start = false
 		skip = false
 		print("cycle")
 		local function boot()
 			local newsound = Instance.new("Sound")
 			newsound.SoundId = pbu.."/music/1.mp3"
+			newsound.Volume = 1
 
 			newsound.Parent = script.Parent
 			newsound:Play()
@@ -166,11 +181,33 @@ local function playTheGame()
 				script.Parent.game.overlay.BackgroundTransparency = 0
 				
 				--finaly should be ~35?
-				local title = renderMaskImg("/assets/titlescreen/pokemon_ruby.png", maxX/2, 45, 175, 64, Vector2.new(0.5, 0.5))
-				local shine = renderMaskImg("/assets/titlescreen/logo_shine.png", 0, 0, 85, 144, Vector2.new(0, 0))
+				local flash = renderImg("/assets/titlescreen/brightwhitelight.png", 0, 0, maxX, maxY, Vector2.new(0, 0))
+				local title = renderMaskImg("/assets/titlescreen/title.png", maxX/2, 45, 175, 64, Vector2.new(0.5, 0.5))
+				local shine = renderMaskImg("/assets/titlescreen/logo_shine.png", -85, 0, 85, 144, Vector2.new(0, 0))
 				shine.Parent = title
 				
-				genericOpacityTween(script.Parent.game.overlay, 1, 10)
+				flash.ImageTransparency = 1
+				
+				shine.maskedwithinframe.ImageTransparency = 0.5
+				
+				genericOpacityTween(script.Parent.game.overlay, 1, 10, function()
+					shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
+					shine:TweenPosition(UDim2.new(1, 0, 0, 0))
+					wait(1.4)
+					flash.ImageTransparency = 1
+					genericOpacityTween(flash, 0.2, 10)
+					wait(.05)
+					shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
+					shine:TweenPosition(UDim2.new(1, 0, 0, 0))
+					wait(0.05)
+					genericOpacityTween(flash, 1, 20)
+					wait(0.6)
+					genericOpacityTween(flash, 0, 10)
+					shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
+					wait(0.05)
+					shine:TweenPosition(UDim2.new(1, 0, 0, 0))
+					genericOpacityTween(flash, 1, 20)
+				end)
 				
 				newsound.Ended:Wait()
 			end
@@ -180,18 +217,22 @@ local function playTheGame()
 		script.Parent.game.overlay.BackgroundTransparency = 0
 		--offset 15. get to 28px. lineheight 4
 		
+		local test = 3
+		local base = 30
+		local space = 15
+		
 		local lines = batchRenderFromSameLinkInBounds({
-			--[[ 2003 txt ]]{["x"] = 120, ["y"] = 144/2, ["sizex"] = 28, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(30,8)},
-			--[[ cpr symbol 1 ]]{["x"] = 120, ["y"] = 144/2, ["sizex"] = 8, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(8,8)},
-			--[[ cpr symbol 2 ]]{["x"] = 120, ["y"] = 144/2, ["sizex"] = 8, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(8,8)},
-			--[[ cpr symbol 3 ]]{["x"] = 120, ["y"] = 144/2, ["sizex"] = 8, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(8,8)},
-			--[[ pokemon txt ]]{["x"] = 120, ["y"] = 144/3, ["sizex"] = 52, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(49, 0), ["frameRectSize"] = Vector2.new(52,8)},
-			--[[ date txt 1 ]]{["x"] = 120, ["y"] = 144/2.5, ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8)},
-			--[[ date txt 2 ]]{["x"] = 120, ["y"] = 144/2.5, ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8)},
-			--[[ date txt 3 ]]{["x"] = 120, ["y"] = 144/2.5, ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8)},
-			--[[ nintendo txt ]]{["x"] = 120, ["y"] = 144/4, ["sizex"] = 50, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(153, 0), ["frameRectSize"] = Vector2.new(50,8)},
-			--[[ creatures txt ]]{["x"] = 120, ["y"] = 144/5, ["sizex"] = 61, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(1, 9), ["frameRectSize"] = Vector2.new(61,7)},
-			--[[ gamefreak txt ]]{["x"] = 120, ["y"] = 144/1.5, ["sizex"] = 71, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(65, 9), ["frameRectSize"] = Vector2.new(71,7)},
+			--[[ 2003 txt ]]{["x"] = 80-test, ["y"] = base+(space), ["sizex"] = 28, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(30,8)},
+			--[[ cpr symbol 1 ]]{["x"] = 70-test, ["y"] = base+(space*2), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8)},
+			--[[ cpr symbol 2 ]]{["x"] = 70-test, ["y"] = base+(space*3), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8)},
+			--[[ cpr symbol 3 ]]{["x"] = 70-test, ["y"] = base+(space*4), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8)},
+			--[[ pokemon txt ]]{["x"] = maxX/2, ["y"] = base+(space), ["sizex"] = 52, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(49, 0), ["frameRectSize"] = Vector2.new(52,8)},
+			--[[ date txt 1 ]]{["x"] = 75-test, ["y"] = base+(space*2), ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8)},
+			--[[ date txt 2 ]]{["x"] = 75-test, ["y"] = base+(space*3), ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8)},
+			--[[ date txt 3 ]]{["x"] = 75-test, ["y"] = base+(space*4), ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8)},
+			--[[ nintendo txt ]]{["x"] = 120, ["y"] = base+(space*2), ["sizex"] = 50, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(153, 0), ["frameRectSize"] = Vector2.new(50,8)},
+			--[[ creatures txt ]]{["x"] = 120, ["y"] = base+(space*3), ["sizex"] = 61, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(1, 9), ["frameRectSize"] = Vector2.new(61,7)},
+			--[[ gamefreak txt ]]{["x"] = 120, ["y"] = base+(space*4), ["sizex"] = 71, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(65, 9), ["frameRectSize"] = Vector2.new(71,7)},
 		}, "/assets/titlescreen/copyright.png")
 		genericOpacityTween(script.Parent.game.overlay, 1, 10)
 		
@@ -251,6 +292,7 @@ local function playTheGame()
 		
 		newsound.Ended:Wait()
 		print("sssdasfd")
+		if start == true then triggers.RestartMainTitleLoop.Value = not triggers.RestartMainTitleLoop.Value end
 		boot2(newsound)
 		newsound.Ended:Wait()
 		print("wefwrgger")
