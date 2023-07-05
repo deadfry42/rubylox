@@ -10,7 +10,7 @@ The reason you need to install a patch is because this is the way I am trying to
 
 (I am not a lawyer. If you are a lawyer, please let me know if this'd work)
 
-Please join the discord server if you'd like to join.
+Please join the discord server if you'd like to join (and install the patch).
 https://discord.gg/RfHFJ59khG
 
 ## This project is incredibly incomplete
