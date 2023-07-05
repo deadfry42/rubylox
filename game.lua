@@ -152,9 +152,29 @@ local function batchRenderFromSameLinkInBounds(list, link) --each entry follows 
 end
 
 local function createMenuBox(link, x, y, lengthofmiddlex, lengthofmiddley) --x&y is origin at top left
+	local dictionary = {
+		["topleft"] = Vector2.new(0, 0), ["topmiddle"] = Vector2.new(8, 0), ["topright"] = Vector2.new(16, 0), ["middleleft"] = Vector2.new(0, 8), ["middlemiddle"] = Vector2.new(8, 8), ["middleright"] = Vector2.new(16, 8), ["bottomleft"] = Vector2.new(0, 16), ["bottommiddle"] = Vector2.new(8, 16), ["bottomright"] = Vector2.new(16, 16), }
+	local size = 8
+	local function addToRender(listToRender, cx, cy, offset)
+		table.insert(listToRender, {
+			["x"] = cx, ["y"] = cy, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = offset, ["frameRectSize"] = Vector2.new(size, size)
+		})
+	end
 	local listToRender = {
-		{["x"] = x, ["y"] = y, ["sizex"] = 7, ["sizey"] = 7, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = Vector2.new(1, 1), ["frameRectSize"] = Vector2.new(7, 7)},
+		{["x"] = x, ["y"] = y, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = dictionary.topleft, ["frameRectSize"] = Vector2.new(size, size)},
 	}
+	local cx = x+size
+	local cy = y
+	for ii=1, lengthofmiddlex do addToRender(listToRender, cx, cy, dictionary.topmiddle) cx += size end
+	addToRender(listToRender, cx, cy, dictionary.topright) cy += size
+	for i=1, lengthofmiddley do
+		cx = x addToRender(listToRender, cx, cy, dictionary.middleleft)
+		for ii=0, lengthofmiddlex do cx += size addToRender(listToRender, cx, cy, dictionary.middlemiddle) end
+		addToRender(listToRender, cx, cy, dictionary.middleright) cy+=size
+	end
+	cx = x addToRender(listToRender, cx, cy, dictionary.bottomleft) cx += size
+	for ii=1, lengthofmiddlex do addToRender(listToRender, cx, cy, dictionary.bottommiddle) cx += size end
+	addToRender(listToRender, cx, cy, dictionary.bottomright)
 	local allReturned = batchRenderFromSameLinkInBounds(listToRender, link)
 	return allReturned
 end
@@ -276,7 +296,8 @@ local function playTheGame()
 								bg.ImageTransparency = 1
 								bg.BackgroundTransparency = 0
 								script.Parent.game.overlay.BackgroundTransparency = 1
-								local topoption = createMenuBox(pbu.."/assets/ui/1.png", 8, 1, 20, 1)
+								local topoption = createMenuBox("/assets/ui/1.png", 8, 1, 26, 1)
+								local middleoption = createMenuBox("/assets/ui/1.png", 8, 25, 26 ,1)
 							end)
 						end)
 					end
