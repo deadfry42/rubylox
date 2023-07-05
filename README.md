@@ -4,6 +4,9 @@ Recreating Pokemon Ruby in the Roblox game engine (engine only, no ROM)
 ## Note:
 Please do not use my code as an example. I am not necessarily a good programmer and when it comes to translating another person's work, it usually isn't for me. I am doing this solely as a passion project.
 
+The main reason why this github repo was made is was to archive my engine code, just to make sure I have a backup of my progress
+
+
 ### Assets:
 This game will require installing a patch to the Roblox internal game files. This process will differ between Windows & Mac, but there are tutorials on how to in the discord below.
 The reason you need to install a patch is because this is the way I am trying to get past copyright. All of the copyrighted assets are not hosted on Roblox and instead in the patch, which makes the assets unnaccesible for regular users. Therefore, because the assets are NOT anywhere publically, I am essentially voiding copyright.
