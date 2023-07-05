@@ -21,6 +21,8 @@ local skip = false
 local maxX = 240
 local maxY = 144
 
+local txtbox = 11
+
 local function clearGraphics()
 	for i, v in ipairs(script.Parent.game.loadedassets:GetChildren()) do
 		v:Destroy()
@@ -96,7 +98,7 @@ local function playSFX(sfxnameinfolder, vol)
 	newsfx:Destroy()
 end
 
-local function renderImg(filepathinpatch, x, y, sizex, sizey, anchor) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 144, same for sizes
+local function renderImg(filepathinpatch, x, y, sizex, sizey, anchor, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 144, same for sizes
 	local newimg = Instance.new("ImageLabel")
 	newimg.Image = pbu..filepathinpatch
 	newimg.Parent = script.Parent.game.loadedassets
@@ -105,10 +107,13 @@ local function renderImg(filepathinpatch, x, y, sizex, sizey, anchor) --returns 
 	newimg.BackgroundTransparency = 1
 	newimg.Position = UDim2.new((x/maxX), 0, (y/maxY), 0)
 	newimg.Size = UDim2.new((sizex/maxX), 0, (sizey/maxY), 0)
+	pcall(function()
+		callback(newimg)
+	end)
 	return newimg
 end
 
-local function renderMaskImg(filepathinpatch, x, y, sizex, sizey, anchor) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 144, same for sizes
+local function renderMaskImg(filepathinpatch, x, y, sizex, sizey, anchor, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 144, same for sizes
 	local newf = Instance.new("Frame")
 	newf.Name = filepathinpatch
 	newf.BackgroundTransparency = 1
@@ -126,10 +131,13 @@ local function renderMaskImg(filepathinpatch, x, y, sizex, sizey, anchor) --retu
 	newimg.BackgroundTransparency = 1
 	newimg.Position = UDim2.new(0.5, 0, 0.5, 0)
 	newimg.Size = UDim2.new(1, 0, 1, 0)
+	pcall(function()
+		callback(newf)
+	end)
 	return newf
 end
 
-local function renderImgInBounds(filepathinpatch, x, y, sizex, sizey, anchor, frameRectOffset, frameRectSize) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 144, same for sizes
+local function renderImgInBounds(filepathinpatch, x, y, sizex, sizey, anchor, frameRectOffset, frameRectSize, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 144, same for sizes
 	local newimg = Instance.new("ImageLabel")
 	newimg.Image = pbu..filepathinpatch
 	newimg.Parent = script.Parent.game.loadedassets
@@ -140,31 +148,33 @@ local function renderImgInBounds(filepathinpatch, x, y, sizex, sizey, anchor, fr
 	newimg.ImageRectSize = frameRectSize
 	newimg.Position = UDim2.new((x/maxX), 0, (y/maxY), 0)
 	newimg.Size = UDim2.new((sizex/maxX), 0, (sizey/maxY), 0)
+	pcall(function()
+		callback(newimg)
+	end)
 	return newimg
 end
 
 local function batchRenderFromSameLinkInBounds(list, link) --each entry follows the same as renderImgInBounds
 	local allReturned = {}
 	for i, v in ipairs(list) do 
-		table.insert(allReturned, renderImgInBounds(link, v.x, v.y, v.sizex, v.sizey, v.anchor, v.frameRectOffset, v.frameRectSize))
+		table.insert(allReturned, renderImgInBounds(link, v.x, v.y, v.sizex, v.sizey, v.anchor, v.frameRectOffset, v.frameRectSize, v.callback))
 	end
 	return allReturned
 end
 
-local function createMenuBox(link, x, y, lengthofmiddlex, lengthofmiddley) --x&y is origin at top left
+local function createMenuBox(link, x, y, lengthofmiddlex, lengthofmiddley, imgColour) --x&y is origin at top left
 	local dictionary = {
 		["topleft"] = Vector2.new(0, 0), ["topmiddle"] = Vector2.new(8, 0), ["topright"] = Vector2.new(16, 0), ["middleleft"] = Vector2.new(0, 8), ["middlemiddle"] = Vector2.new(8, 8), ["middleright"] = Vector2.new(16, 8), ["bottomleft"] = Vector2.new(0, 16), ["bottommiddle"] = Vector2.new(8, 16), ["bottomright"] = Vector2.new(16, 16), }
 	local size = 8
 	local function addToRender(listToRender, cx, cy, offset)
 		table.insert(listToRender, {
-			["x"] = cx, ["y"] = cy, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = offset, ["frameRectSize"] = Vector2.new(size, size)
+			["x"] = cx, ["y"] = cy, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = offset, ["frameRectSize"] = Vector2.new(size, size), ["callback"] = function(ni) ni.ImageColor3 = imgColour end,
 		})
 	end
-	local listToRender = {
-		{["x"] = x, ["y"] = y, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = dictionary.topleft, ["frameRectSize"] = Vector2.new(size, size)},
-	}
+	local listToRender = {}
 	local cx = x+size
 	local cy = y
+	addToRender(listToRender, x, y, dictionary.topleft)
 	for ii=1, lengthofmiddlex do addToRender(listToRender, cx, cy, dictionary.topmiddle) cx += size end
 	addToRender(listToRender, cx, cy, dictionary.topright) cy += size
 	for i=1, lengthofmiddley do
@@ -252,17 +262,17 @@ local function playTheGame()
 		local space = 15
 		
 		local lines = batchRenderFromSameLinkInBounds({
-			--[[ 2003 txt ]]{["x"] = 80-test, ["y"] = base+(space), ["sizex"] = 28, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(30,8)},
-			--[[ cpr symbol 1 ]]{["x"] = 70-test, ["y"] = base+(space*2), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8)},
-			--[[ cpr symbol 2 ]]{["x"] = 70-test, ["y"] = base+(space*3), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8)},
-			--[[ cpr symbol 3 ]]{["x"] = 70-test, ["y"] = base+(space*4), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8)},
-			--[[ pokemon txt ]]{["x"] = maxX/2, ["y"] = base+(space), ["sizex"] = 52, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(49, 0), ["frameRectSize"] = Vector2.new(52,8)},
-			--[[ date txt 1 ]]{["x"] = 75-test, ["y"] = base+(space*2), ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8)},
-			--[[ date txt 2 ]]{["x"] = 75-test, ["y"] = base+(space*3), ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8)},
-			--[[ date txt 3 ]]{["x"] = 75-test, ["y"] = base+(space*4), ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8)},
-			--[[ nintendo txt ]]{["x"] = 120, ["y"] = base+(space*2), ["sizex"] = 50, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(153, 0), ["frameRectSize"] = Vector2.new(50,8)},
-			--[[ creatures txt ]]{["x"] = 120, ["y"] = base+(space*3), ["sizex"] = 61, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(1, 9), ["frameRectSize"] = Vector2.new(61,7)},
-			--[[ gamefreak txt ]]{["x"] = 120, ["y"] = base+(space*4), ["sizex"] = 71, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(65, 9), ["frameRectSize"] = Vector2.new(71,7)},
+			--[[ 2003 txt ]]{["x"] = 80-test, ["y"] = base+(space), ["sizex"] = 28, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(30,8), ["callback"] = "",},
+			--[[ cpr symbol 1 ]]{["x"] = 70-test, ["y"] = base+(space*2), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8), ["callback"] = "",},
+			--[[ cpr symbol 2 ]]{["x"] = 70-test, ["y"] = base+(space*3), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8), ["callback"] = "",},
+			--[[ cpr symbol 3 ]]{["x"] = 70-test, ["y"] = base+(space*4), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8), ["callback"] = "",},
+			--[[ pokemon txt ]]{["x"] = maxX/2, ["y"] = base+(space), ["sizex"] = 52, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(49, 0), ["frameRectSize"] = Vector2.new(52,8), ["callback"] = "",},
+			--[[ date txt 1 ]]{["x"] = 75-test, ["y"] = base+(space*2), ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8), ["callback"] = "",},
+			--[[ date txt 2 ]]{["x"] = 75-test, ["y"] = base+(space*3), ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8), ["callback"] = "",},
+			--[[ date txt 3 ]]{["x"] = 75-test, ["y"] = base+(space*4), ["sizex"] = 41, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(105, 0), ["frameRectSize"] = Vector2.new(41,8), ["callback"] = "",},
+			--[[ nintendo txt ]]{["x"] = 120, ["y"] = base+(space*2), ["sizex"] = 50, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(153, 0), ["frameRectSize"] = Vector2.new(50,8), ["callback"] = "",},
+			--[[ creatures txt ]]{["x"] = 120, ["y"] = base+(space*3), ["sizex"] = 61, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(1, 9), ["frameRectSize"] = Vector2.new(61,7), ["callback"] = "",},
+			--[[ gamefreak txt ]]{["x"] = 120, ["y"] = base+(space*4), ["sizex"] = 71, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(65, 9), ["frameRectSize"] = Vector2.new(71,7), ["callback"] = "",},
 		}, "/assets/titlescreen/copyright.png")
 		genericOpacityTween(script.Parent.game.overlay, 1, 10)
 		
@@ -296,8 +306,8 @@ local function playTheGame()
 								bg.ImageTransparency = 1
 								bg.BackgroundTransparency = 0
 								script.Parent.game.overlay.BackgroundTransparency = 1
-								local topoption = createMenuBox("/assets/ui/1.png", 8, 1, 26, 1)
-								local middleoption = createMenuBox("/assets/ui/1.png", 8, 25, 26 ,1)
+								local topoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 1, Color3.new(0.5 ,0.5 ,0.5))
+								local middleoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 25, 26 ,1, Color3.new(0.5 ,0.5 ,0.5))
 							end)
 						end)
 					end
