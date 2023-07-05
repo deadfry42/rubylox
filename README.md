@@ -8,6 +8,11 @@ Please do not use my code as an example. I am not necessarily a good programmer 
 This game will require installing a patch to the Roblox internal game files. This process will differ between Windows & Mac, but there are tutorials on how to in the discord below.
 The reason you need to install a patch is because this is the way I am trying to get past copyright. All of the copyrighted assets are not hosted on Roblox and instead in the patch, which makes the assets unnaccesible for regular users. Therefore, because the assets are NOT anywhere publically, I am essentially voiding copyright.
 
+ - The patch is made on MacOSX, so if you download or get ahold of a patch with a folder called '_MACOSX', do not worry.
+ - I am unsure if the same may be true for Linux, but if there is any other folder relating to 'Linux' or more specifically 'Ubuntu', that is my main machine.
+
+
+
 (I am not a lawyer. If you are a lawyer, please let me know if this'd work)
 
 Please join the discord server if you'd like to join (and install the patch).
