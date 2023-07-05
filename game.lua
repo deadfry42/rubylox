@@ -4,6 +4,7 @@ local inputs = require(game.ReplicatedStorage.inputs)
 local twns = game:GetService("TweenService")
 local uis = game:GetService("UserInputService")
 local cntp = game:GetService("ContentProvider")
+local bs = game:GetService("BadgeService")
 
 local triggers = script.Triggers
 
@@ -150,7 +151,16 @@ local function batchRenderFromSameLinkInBounds(list, link) --each entry follows 
 	return allReturned
 end
 
+local function createMenuBox(link, x, y, lengthofmiddlex, lengthofmiddley) --x&y is origin at top left
+	local listToRender = {
+		{["x"] = x, ["y"] = y, ["sizex"] = 7, ["sizey"] = 7, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = Vector2.new(1, 1), ["frameRectSize"] = Vector2.new(7, 7)},
+	}
+	local allReturned = batchRenderFromSameLinkInBounds(listToRender, link)
+	return allReturned
+end
+
 local function playTheGame()
+	game.ReplicatedStorage["remote events (RARE!!!!)"]["gib welcome badge"]:FireServer()
 	while began == false do
 		clearGraphics()
 		start = false
@@ -193,10 +203,10 @@ local function playTheGame()
 				genericOpacityTween(script.Parent.game.overlay, 1, 10, function()
 					shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
 					shine:TweenPosition(UDim2.new(1, 0, 0, 0))
-					wait(1.4)
+					wait(1.45)
 					flash.ImageTransparency = 1
-					genericOpacityTween(flash, 0.2, 10)
-					wait(.05)
+					genericOpacityTween(flash, 0, 10)
+					wait()
 					shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
 					shine:TweenPosition(UDim2.new(1, 0, 0, 0))
 					wait(0.05)
@@ -246,7 +256,7 @@ local function playTheGame()
 		uis.InputBegan:Connect(function(inp)
 			if inp.UserInputType == Enum.UserInputType.Keyboard then
 				if start == true and began == false then
-					if inp.KeyCode == inputs.scheme1.advance then
+					if inp.KeyCode == inputs.scheme1.interact or inp.KeyCode == inputs.scheme1.cancel or inp.KeyCode == inputs.scheme1.menu then
 						began = true
 						local twni = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 						local gA = {} gA.Volume = 0
@@ -259,6 +269,14 @@ local function playTheGame()
 							genericColorTween(script.Parent.game.overlay, Color3.new(0.501961, 0.596078, 0.784314), 10, function()
 								wait(.1)
 								genericColorTween(script.Parent.game.overlay, Color3.new(0.309804, 0.32549, 0.560784), 2)
+								--main titlescreen
+								print("achievd")
+								local bg = renderImg(pbu.."/assets/titlescreen/brightwhitelight.png", 0 ,0, maxX, maxY, Vector2.new(0 ,0))
+								bg.BackgroundColor3 = Color3.new(0.309804, 0.32549, 0.560784)
+								bg.ImageTransparency = 1
+								bg.BackgroundTransparency = 0
+								script.Parent.game.overlay.BackgroundTransparency = 1
+								local topoption = createMenuBox(pbu.."/assets/ui/1.png", 8, 1, 20, 1)
 							end)
 						end)
 					end
@@ -274,6 +292,7 @@ local function playTheGame()
 						skip = false
 						began = false
 						wait(0.2)
+						clearGraphics()
 						titleScreen(newsound)
 					elseif start == false and began == false then
 						titleScreen(newsound)
