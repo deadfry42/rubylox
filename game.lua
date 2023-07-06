@@ -127,7 +127,7 @@ local began = false
 local skip = false
 
 local maxX = 240
-local maxY = 144
+local maxY = 160
 
 local txtbox = 7
 
@@ -206,7 +206,7 @@ local function playSFX(sfxnameinfolder, vol)
 	newsfx:Destroy()
 end
 
-local function renderImg(filepathinpatch, x, y, sizex, sizey, anchor, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 144, same for sizes
+local function renderImg(filepathinpatch, x, y, sizex, sizey, anchor, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 160, same for sizes
 	local newimg = Instance.new("ImageLabel")
 	newimg.Image = pbu..filepathinpatch
 	newimg.Parent = script.Parent.game.loadedassets
@@ -215,13 +215,14 @@ local function renderImg(filepathinpatch, x, y, sizex, sizey, anchor, callback) 
 	newimg.BackgroundTransparency = 1
 	newimg.Position = UDim2.new((x/maxX), 0, (y/maxY), 0)
 	newimg.Size = UDim2.new((sizex/maxX), 0, (sizey/maxY), 0)
+	newimg.ResampleMode = Enum.ResamplerMode.Pixelated
 	pcall(function()
 		callback(newimg)
 	end)
 	return newimg
 end
 
-local function renderMaskImg(filepathinpatch, x, y, sizex, sizey, anchor, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 144, same for sizes
+local function renderMaskImg(filepathinpatch, x, y, sizex, sizey, anchor, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 160, same for sizes
 	local newf = Instance.new("Frame")
 	newf.Name = filepathinpatch
 	newf.BackgroundTransparency = 1
@@ -239,13 +240,14 @@ local function renderMaskImg(filepathinpatch, x, y, sizex, sizey, anchor, callba
 	newimg.BackgroundTransparency = 1
 	newimg.Position = UDim2.new(0.5, 0, 0.5, 0)
 	newimg.Size = UDim2.new(1, 0, 1, 0)
+	newimg.ResampleMode = Enum.ResamplerMode.Pixelated
 	pcall(function()
 		callback(newf)
 	end)
 	return newf
 end
 
-local function renderImgInBounds(filepathinpatch, x, y, sizex, sizey, anchor, frameRectOffset, frameRectSize, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 144, same for sizes
+local function renderImgInBounds(filepathinpatch, x, y, sizex, sizey, anchor, frameRectOffset, frameRectSize, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 160, same for sizes
 	local newimg = Instance.new("ImageLabel")
 	newimg.Image = pbu..filepathinpatch
 	newimg.Parent = script.Parent.game.loadedassets
@@ -256,6 +258,7 @@ local function renderImgInBounds(filepathinpatch, x, y, sizex, sizey, anchor, fr
 	newimg.ImageRectSize = frameRectSize
 	newimg.Position = UDim2.new((x/maxX), 0, (y/maxY), 0)
 	newimg.Size = UDim2.new((sizex/maxX), 0, (sizey/maxY), 0)
+	newimg.ResampleMode = Enum.ResamplerMode.Pixelated
 	pcall(function()
 		callback(newimg)
 	end)
@@ -313,7 +316,7 @@ local function drawText(font, txt, x, y, colour)
 	local cx = x
 	local cy = y
 	for i, v in ipairs(txt:split(`\n`)) do
-		renderImgInBounds(pbu.."/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+		renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
 			ni.Parent = newf
 			ni.ImageColor3 = colour
 		end)
@@ -335,7 +338,7 @@ local function drawScrollingText(font, txt, x, y, colour)
 		local cx = x
 		local cy = y
 		for i, v in ipairs(txt:split(`\n`)) do
-			renderImgInBounds(pbu.."/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+			renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
 				ni.Parent = newf
 				ni.ImageColor3 = colour
 			end)
@@ -404,8 +407,8 @@ local function playTheGame()
 				
 				--finaly should be ~35?
 				local flash = renderImg("/assets/titlescreen/brightwhitelight.png", 0, 0, maxX, maxY, Vector2.new(0, 0))
-				local title = renderMaskImg("/assets/titlescreen/title.png", maxX/2, 45, 175, 64, Vector2.new(0.5, 0.5))
-				local shine = renderMaskImg("/assets/titlescreen/logo_shine.png", -85, 0, 85, 144, Vector2.new(0, 0))
+				local title = renderMaskImg("/assets/titlescreen/title.png", maxX/2, 68, 175, 64, Vector2.new(0.5, 0.5))
+				local shine = renderMaskImg("/assets/titlescreen/logo_shine.png", -85, 0, 85, maxY, Vector2.new(0, 0))
 				shine.Parent = title
 				
 				flash.ImageTransparency = 1
@@ -497,22 +500,33 @@ local function playTheGame()
 									local c1 = Color3.new(0.5, 0.5, 0.5)
 									local c2 = Color3.new(0.5, 0.5, 0.5)
 									local c3 = Color3.new(0.5, 0.5, 0.5)
+									local csn = Color3.new(1, 1, 1)
+									local cnsn = Color3.new(0.5, 0.5, 0.5)
+									local mcsn = Color3.new(0.129412, 0.517647, 1)
+									local mcnsn = Color3.new(0.064706, 0.2588235, 0.5)
 									if selected == 1 then c1 = Color3.new(1, 1, 1) end
 									if selected == 2 then c2 = Color3.new(1, 1, 1) end
 									if selected == 3 then c3 = Color3.new(1, 1, 1) end
+									local function getclr(selectedReq, cs, cns)
+										if selected == selectedReq then
+											return cs
+										else
+											return cns
+										end
+									end
 									local topoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 6, c1)
 									local middleoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65, 26 ,2, c2)
 									local bottomoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65+32, 26 ,2, c3)
-									local txt = drawText("font3_dark", "C\nO\nN\nT\nI\nN\nU\nE", 16, 9, Color3.new(selected-0, selected-0, selected-0))
-									local plrtitle = drawText("font3_new", "P\nL\nA\nY\nE\nR", 16, 9+16, Color3.new(0.129412, 0.517647, 1))
-									local pkdxtitle = drawText("font3_new", "P\nO\nK\nefa\nD\nE\nX", 16, 9+32, Color3.new(0.129412, 0.517647, 1))
-									local txt2 = drawText("font3_dark", "N\nE\nW\n \nG\nA\nM\nE", 16, 73, Color3.new(selected-1, selected-1, selected-1))
-									local txt3 = drawText("font3_dark", "O\nP\nT\nI\nO\nN\nS", 16, 65+23+8+8, Color3.new(selected-2, selected-2, selected-2))
+									local txt = drawText("font3_dark", "C\nO\nN\nT\nI\nN\nU\nE", 16, 9, getclr(1, csn, cnsn))
+									local plrtitle = drawText("font3_new", "P\nL\nA\nY\nE\nR", 16, 9+16, getclr(1, mcsn, mcnsn))
+									local pkdxtitle = drawText("font3_new", "P\nO\nK\nefa\nD\nE\nX", 16, 9+32, getclr(1, mcsn, mcnsn))
+									local txt2 = drawText("font3_dark", "N\nE\nW\n \nG\nA\nM\nE", 16, 73, getclr(2, csn, cnsn))
+									local txt3 = drawText("font3_dark", "O\nP\nT\nI\nO\nN\nS", 16, 65+23+8+8, getclr(3, csn, cnsn))
 									folder:Destroy()
 								end
 								local selected = 1
 								renderNew(selected)
-								drawScrollingText("font3_dark", "R\ne\na\nl\n \nt\ne\ns\nt\ni\nn\ng\n \nt\ne\nx\nt", 0, 0, Color3.new(1, 1, 1))
+								--drawScrollingText("font3_dark", "R\ne\na\nl\n \nt\ne\ns\nt\ni\nn\ng\n \nt\ne\nx\nt", 0, 0, Color3.new(1, 1, 1))
 								local connection = uis.InputBegan:Connect(function(inp)
 									if start == true and began == true then
 										if inp.KeyCode == inputs.scheme1.up then
