@@ -1,5 +1,6 @@
 local pbu = require(game.ReplicatedStorage.patchbaseurl)
 local inputs = require(game.ReplicatedStorage.inputs)
+local fontrom = require(game.ReplicatedStorage.fontrom)
 
 local twns = game:GetService("TweenService")
 local uis = game:GetService("UserInputService")
@@ -8,113 +9,9 @@ local bs = game:GetService("BadgeService")
 
 local triggers = script.Triggers
 
-
-local font3Width = 8
-local font3Height = 16
-local font3 = {
-	--nums
-	["0"] = {["x"] = 8, ["y"] = 160},
-	["1"] = {["x"] = 16, ["y"] = 160},
-	["2"] = {["x"] = 24, ["y"] = 160},
-	["3"] = {["x"] = 32, ["y"] = 160},
-	["4"] = {["x"] = 40, ["y"] = 160},
-	["5"] = {["x"] = 48, ["y"] = 160},
-	["6"] = {["x"] = 56, ["y"] = 160},
-	["7"] = {["x"] = 64, ["y"] = 160},
-	["8"] = {["x"] = 72, ["y"] = 160},
-	["9"] = {["x"] = 80, ["y"] = 160},
-	--grammar
-	["!"] = {["x"] = 88, ["y"] = 160},
-	["?"] = {["x"] = 96, ["y"] = 160},
-	["."] = {["x"] = 104, ["y"] = 160},
-	["-"] = {["x"] = 112, ["y"] = 160},
-	["·"] = {["x"] = 120, ["y"] = 160},
-	[".."] = {["x"] = 0, ["y"] = 176},
-	['“'] = {["x"] = 8, ["y"] = 176},
-	['”'] = {["x"] = 16, ["y"] = 176},
-	["‘"] = {["x"] = 24, ["y"] = 176},
-	["’"] = {["x"] = 32, ["y"] = 176},
-	--misc1
-	["♂"] = {["x"] = 40, ["y"] = 176},
-	["♀"] = {["x"] = 48, ["y"] = 176},
-	["¥"] = {["x"] = 56, ["y"] = 176},
-	["‚"] = {["x"] = 64, ["y"] = 176},
-	["×"] = {["x"] = 72, ["y"] = 176},
-	["/"] = {["x"] = 80, ["y"] = 176},
-	--uppercase
-	["A"] = {["x"] = 88, ["y"] = 176},
-	["B"] = {["x"] = 96, ["y"] = 176},
-	["C"] = {["x"] = 104, ["y"] = 176},
-	["D"] = {["x"] = 112, ["y"] = 176},
-	["E"] = {["x"] = 120, ["y"] = 176},
-	["F"] = {["x"] = 0, ["y"] = 192},
-	["G"] = {["x"] = 8, ["y"] = 192},
-	["H"] = {["x"] = 16, ["y"] = 192},
-	["I"] = {["x"] = 24, ["y"] = 192},
-	["J"] = {["x"] = 32, ["y"] = 192},
-	["K"] = {["x"] = 40, ["y"] = 192},
-	["L"] = {["x"] = 48, ["y"] = 192},
-	["M"] = {["x"] = 56, ["y"] = 192},
-	["N"] = {["x"] = 64, ["y"] = 192},
-	["O"] = {["x"] = 72, ["y"] = 192},
-	["P"] = {["x"] = 80, ["y"] = 192},
-	["Q"] = {["x"] = 88, ["y"] = 192},
-	["R"] = {["x"] = 96, ["y"] = 192},
-	["S"] = {["x"] = 104, ["y"] = 192},
-	["T"] = {["x"] = 112, ["y"] = 192},
-	["U"] = {["x"] = 120, ["y"] = 192},
-	["V"] = {["x"] = 0, ["y"] = 208},
-	["W"] = {["x"] = 8, ["y"] = 208},
-	["X"] = {["x"] = 16, ["y"] = 208},
-	["Y"] = {["x"] = 24, ["y"] = 208},
-	["Z"] = {["x"] = 32, ["y"] = 208},
-	--lowercase
-	["a"] = {["x"] = 40, ["y"] = 208},
-	["b"] = {["x"] = 48, ["y"] = 208},
-	["c"] = {["x"] = 56, ["y"] = 208},
-	["d"] = {["x"] = 64, ["y"] = 208},
-	["e"] = {["x"] = 72, ["y"] = 208},
-	["f"] = {["x"] = 80, ["y"] = 208},
-	["g"] = {["x"] = 88, ["y"] = 208},
-	["h"] = {["x"] = 96, ["y"] = 208},
-	["i"] = {["x"] = 104, ["y"] = 208},
-	["j"] = {["x"] = 112, ["y"] = 208},
-	["k"] = {["x"] = 120, ["y"] = 208},
-	["l"] = {["x"] = 0, ["y"] = 224},
-	["m"] = {["x"] = 8, ["y"] = 224},
-	["n"] = {["x"] = 16, ["y"] = 224},
-	["o"] = {["x"] = 24, ["y"] = 224},
-	["p"] = {["x"] = 32, ["y"] = 224},
-	["q"] = {["x"] = 40, ["y"] = 224},
-	["r"] = {["x"] = 48, ["y"] = 224},
-	["s"] = {["x"] = 56, ["y"] = 224},
-	["t"] = {["x"] = 64, ["y"] = 224},
-	["u"] = {["x"] = 72, ["y"] = 224},
-	["v"] = {["x"] = 80, ["y"] = 224},
-	["w"] = {["x"] = 88, ["y"] = 224},
-	["x"] = {["x"] = 96, ["y"] = 224},
-	["y"] = {["x"] = 104, ["y"] = 224},
-	["z"] = {["x"] = 112, ["y"] = 224},
-	--accents
-	["Ä"] = {["x"] = 8, ["y"] = 240},
-	["Ö"] = {["x"] = 16, ["y"] = 240},
-	["Ü"] = {["x"] = 24, ["y"] = 240},
-	["ä"] = {["x"] = 32, ["y"] = 240},
-	["ö"] = {["x"] = 40, ["y"] = 240},
-	["ü"] = {["x"] = 48, ["y"] = 240},
-	["efa"] = {["x"] = 88, ["y"] = 16}, --é
-	["eba"] = {["x"] = 80, ["y"] = 16}, --è
-	
-	--misc2
-	["▶"] = {["x"] = 120, ["y"] = 224},
-	[":"] = {["x"] = 0, ["y"] = 240},
-	["↑"] = {["x"] = 56, ["y"] = 240},
-	["↓"] = {["x"] = 64, ["y"] = 240},
-	["←"] = {["x"] = 72, ["y"] = 240},
-	["→"] = {["x"] = 80, ["y"] = 240},
-	["+"] = {["x"] = 88, ["y"] = 240},
-	[" "] = {["x"] = 0, ["y"] = 0},
-}
+local font3Width = fontrom.font3.width
+local font3Height = fontrom.font3.height
+local font3 = fontrom.font3.offsets
 
 --[[
 things to fix (at a later date):
@@ -129,7 +26,7 @@ local skip = false
 local maxX = 240
 local maxY = 160
 
-local txtbox = 7
+local txtbox = 1
 
 local function clearGraphics()
 	for i, v in ipairs(script.Parent.game.loadedassets:GetChildren()) do
@@ -288,6 +185,11 @@ local function createMenuBox(link, x, y, lengthofmiddlex, lengthofmiddley, imgCo
 			["x"] = cx, ["y"] = cy, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = offset, ["frameRectSize"] = Vector2.new(size, size), ["callback"] = function(ni) ni.ImageColor3 = imgColour ni.Parent = newf end,
 		})
 	end
+	local function addToRenderInvis(listToRender, cx, cy, offset)
+		table.insert(listToRender, {
+			["x"] = cx, ["y"] = cy, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = offset, ["frameRectSize"] = Vector2.new(size, size), ["callback"] = function(ni) ni.ImageColor3 = imgColour ni.Parent = newf ni.ImageTransparency = 1 end,
+		})
+	end
 	local listToRender = {}
 	local cx = x+size
 	local cy = y
@@ -295,8 +197,16 @@ local function createMenuBox(link, x, y, lengthofmiddlex, lengthofmiddley, imgCo
 	for ii=1, lengthofmiddlex do addToRender(listToRender, cx, cy, dictionary.topmiddle) cx += size end
 	addToRender(listToRender, cx, cy, dictionary.topright) cy += size
 	for i=1, lengthofmiddley do
-		cx = x addToRender(listToRender, cx, cy, dictionary.middleleft)
-		for ii=0, lengthofmiddlex do cx += size addToRender(listToRender, cx, cy, dictionary.middlemiddle) end
+		cx = x
+		addToRender(listToRender, cx, cy, dictionary.middleleft)
+		for ii=0, lengthofmiddlex do
+			cx += size
+			if ii == lengthofmiddlex then
+				addToRenderInvis(listToRender, cx, cy, dictionary.middlemiddle)
+			else
+				addToRender(listToRender, cx, cy, dictionary.middlemiddle)
+			end
+		end
 		addToRender(listToRender, cx, cy, dictionary.middleright) cy+=size
 	end
 	cx = x addToRender(listToRender, cx, cy, dictionary.bottomleft) cx += size
@@ -316,12 +226,17 @@ local function drawText(font, txt, x, y, colour)
 	local cx = x
 	local cy = y
 	for i, v in ipairs(txt:split(`\n`)) do
-		renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
-			ni.Parent = newf
-			ni.ImageColor3 = colour
-		end)
+		if v == "nw" then
+			cy += font3Height+1
+			cx = x-font3Width
+		else
+			renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+				ni.Parent = newf
+				ni.ImageColor3 = colour
+			end)
+		end
 		
-		cx+=font3Width
+		cx+=font3Width-1
 	end
 	newf.Parent = script.Parent.game.loadedassets
 	return newf
@@ -338,12 +253,17 @@ local function drawScrollingText(font, txt, x, y, colour)
 		local cx = x
 		local cy = y
 		for i, v in ipairs(txt:split(`\n`)) do
-			renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
-				ni.Parent = newf
-				ni.ImageColor3 = colour
-			end)
+			if v == "nw" then
+				cy += font3Height+1
+				cx = x-font3Width
+			else
+				renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+					ni.Parent = newf
+					ni.ImageColor3 = colour
+				end)
+			end
 
-			cx+=font3Width
+			cx+=font3Width-1
 			wait(0.05)
 		end
 	end)
@@ -407,7 +327,7 @@ local function playTheGame()
 				
 				--finaly should be ~35?
 				local flash = renderImg("/assets/titlescreen/brightwhitelight.png", 0, 0, maxX, maxY, Vector2.new(0, 0))
-				local title = renderMaskImg("/assets/titlescreen/title.png", maxX/2, 68, 175, 64, Vector2.new(0.5, 0.5))
+				local title = renderMaskImg("/assets/titlescreen/title.png", maxX/2, 68, 175, 64, Vector2.new(0.5, .5))
 				local shine = renderMaskImg("/assets/titlescreen/logo_shine.png", -85, 0, 85, maxY, Vector2.new(0, 0))
 				shine.Parent = title
 				
@@ -443,7 +363,7 @@ local function playTheGame()
 		--offset 15. get to 28px. lineheight 4
 		
 		local test = 3
-		local base = 30
+		local base = 40
 		local space = 15
 		
 		local lines = batchRenderFromSameLinkInBounds({
@@ -490,6 +410,13 @@ local function playTheGame()
 								bg.ImageTransparency = 1
 								bg.BackgroundTransparency = 0
 								script.Parent.game.overlay.BackgroundTransparency = 1
+								wait(.1)
+								print("dasfadf")
+								local box = createMenuBox("/assets/ui/"..txtbox..".png", 16, maxY-48, 24, 4, Color3.new(1,1,1)) --l = 208px
+								drawScrollingText("font3_dark", "0\n1\n2\n3\n4\n5\n6\n7\n8\n9\nA\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ\n \nh\ne\nl\np\n \nm\ne\nnw\na\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk\nl\nm\nn\no\np\nq\nr\ns\nt\nu\nv\nw\nx\ny\nz", 24, maxY-40, Color3.new(1,1,1))
+								wait(30)
+								
+								box:Destroy()
 								local folder = Instance.new("Folder")
 								folder.Name = "btns"
 								folder.Parent = script.Parent.game.loadedassets
@@ -514,14 +441,14 @@ local function playTheGame()
 											return cns
 										end
 									end
-									local topoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 6, c1)
-									local middleoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65, 26 ,2, c2)
-									local bottomoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65+32, 26 ,2, c3)
-									local txt = drawText("font3_dark", "C\nO\nN\nT\nI\nN\nU\nE", 16, 9, getclr(1, csn, cnsn))
-									local plrtitle = drawText("font3_new", "P\nL\nA\nY\nE\nR", 16, 9+16, getclr(1, mcsn, mcnsn))
-									local pkdxtitle = drawText("font3_new", "P\nO\nK\nefa\nD\nE\nX", 16, 9+32, getclr(1, mcsn, mcnsn))
-									local txt2 = drawText("font3_dark", "N\nE\nW\n \nG\nA\nM\nE", 16, 73, getclr(2, csn, cnsn))
-									local txt3 = drawText("font3_dark", "O\nP\nT\nI\nO\nN\nS", 16, 65+23+8+8, getclr(3, csn, cnsn))
+									local topoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 6, c1) topoption.Parent = newfolder
+									local middleoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65, 26 ,2, c2) middleoption.Parent = newfolder
+									local bottomoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65+32, 26 ,2, c3) bottomoption.Parent = newfolder
+									local txt = drawText("font3_dark", "C\nO\nN\nT\nI\nN\nU\nE", 16, 9, getclr(1, csn, cnsn)) txt.Parent = topoption
+									local plrtitle = drawText("font3_new", "P\nL\nA\nY\nE\nR", 16, 9+16, getclr(1, mcsn, mcnsn)) plrtitle.Parent = topoption
+									local pkdxtitle = drawText("font3_new", "P\nO\nK\nefa\nD\nE\nX", 16, 9+32, getclr(1, mcsn, mcnsn)) pkdxtitle.Parent = topoption
+									local txt2 = drawText("font3_dark", "N\nE\nW\n \nG\nA\nM\nE", 16, 73, getclr(2, csn, cnsn)) txt2.Parent = middleoption
+									local txt3 = drawText("font3_dark", "O\nP\nT\nI\nO\nN\nS", 16, 65+23+8+8, getclr(3, csn, cnsn)) txt3.Parent = bottomoption
 									folder:Destroy()
 								end
 								local selected = 1
