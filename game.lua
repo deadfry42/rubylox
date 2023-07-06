@@ -8,6 +8,114 @@ local bs = game:GetService("BadgeService")
 
 local triggers = script.Triggers
 
+
+local font3Width = 8
+local font3Height = 16
+local font3 = {
+	--nums
+	["0"] = {["x"] = 8, ["y"] = 160},
+	["1"] = {["x"] = 16, ["y"] = 160},
+	["2"] = {["x"] = 24, ["y"] = 160},
+	["3"] = {["x"] = 32, ["y"] = 160},
+	["4"] = {["x"] = 40, ["y"] = 160},
+	["5"] = {["x"] = 48, ["y"] = 160},
+	["6"] = {["x"] = 56, ["y"] = 160},
+	["7"] = {["x"] = 64, ["y"] = 160},
+	["8"] = {["x"] = 72, ["y"] = 160},
+	["9"] = {["x"] = 80, ["y"] = 160},
+	--grammar
+	["!"] = {["x"] = 88, ["y"] = 160},
+	["?"] = {["x"] = 96, ["y"] = 160},
+	["."] = {["x"] = 104, ["y"] = 160},
+	["-"] = {["x"] = 112, ["y"] = 160},
+	["·"] = {["x"] = 120, ["y"] = 160},
+	[".."] = {["x"] = 0, ["y"] = 176},
+	['“'] = {["x"] = 8, ["y"] = 176},
+	['”'] = {["x"] = 16, ["y"] = 176},
+	["‘"] = {["x"] = 24, ["y"] = 176},
+	["’"] = {["x"] = 32, ["y"] = 176},
+	--misc1
+	["♂"] = {["x"] = 40, ["y"] = 176},
+	["♀"] = {["x"] = 48, ["y"] = 176},
+	["¥"] = {["x"] = 56, ["y"] = 176},
+	["‚"] = {["x"] = 64, ["y"] = 176},
+	["×"] = {["x"] = 72, ["y"] = 176},
+	["/"] = {["x"] = 80, ["y"] = 176},
+	--uppercase
+	["A"] = {["x"] = 88, ["y"] = 176},
+	["B"] = {["x"] = 96, ["y"] = 176},
+	["C"] = {["x"] = 104, ["y"] = 176},
+	["D"] = {["x"] = 112, ["y"] = 176},
+	["E"] = {["x"] = 120, ["y"] = 176},
+	["F"] = {["x"] = 0, ["y"] = 192},
+	["G"] = {["x"] = 8, ["y"] = 192},
+	["H"] = {["x"] = 16, ["y"] = 192},
+	["I"] = {["x"] = 24, ["y"] = 192},
+	["J"] = {["x"] = 32, ["y"] = 192},
+	["K"] = {["x"] = 40, ["y"] = 192},
+	["L"] = {["x"] = 48, ["y"] = 192},
+	["M"] = {["x"] = 56, ["y"] = 192},
+	["N"] = {["x"] = 64, ["y"] = 192},
+	["O"] = {["x"] = 72, ["y"] = 192},
+	["P"] = {["x"] = 80, ["y"] = 192},
+	["Q"] = {["x"] = 88, ["y"] = 192},
+	["R"] = {["x"] = 96, ["y"] = 192},
+	["S"] = {["x"] = 104, ["y"] = 192},
+	["T"] = {["x"] = 112, ["y"] = 192},
+	["U"] = {["x"] = 120, ["y"] = 192},
+	["V"] = {["x"] = 0, ["y"] = 208},
+	["W"] = {["x"] = 8, ["y"] = 208},
+	["X"] = {["x"] = 16, ["y"] = 208},
+	["Y"] = {["x"] = 24, ["y"] = 208},
+	["Z"] = {["x"] = 32, ["y"] = 208},
+	--lowercase
+	["a"] = {["x"] = 40, ["y"] = 208},
+	["b"] = {["x"] = 48, ["y"] = 208},
+	["c"] = {["x"] = 56, ["y"] = 208},
+	["d"] = {["x"] = 64, ["y"] = 208},
+	["e"] = {["x"] = 72, ["y"] = 208},
+	["f"] = {["x"] = 80, ["y"] = 208},
+	["g"] = {["x"] = 88, ["y"] = 208},
+	["h"] = {["x"] = 96, ["y"] = 208},
+	["i"] = {["x"] = 104, ["y"] = 208},
+	["j"] = {["x"] = 112, ["y"] = 208},
+	["k"] = {["x"] = 120, ["y"] = 208},
+	["l"] = {["x"] = 0, ["y"] = 224},
+	["m"] = {["x"] = 8, ["y"] = 224},
+	["n"] = {["x"] = 16, ["y"] = 224},
+	["o"] = {["x"] = 24, ["y"] = 224},
+	["p"] = {["x"] = 32, ["y"] = 224},
+	["q"] = {["x"] = 40, ["y"] = 224},
+	["r"] = {["x"] = 48, ["y"] = 224},
+	["s"] = {["x"] = 56, ["y"] = 224},
+	["t"] = {["x"] = 64, ["y"] = 224},
+	["u"] = {["x"] = 72, ["y"] = 224},
+	["v"] = {["x"] = 80, ["y"] = 224},
+	["w"] = {["x"] = 88, ["y"] = 224},
+	["x"] = {["x"] = 96, ["y"] = 224},
+	["y"] = {["x"] = 104, ["y"] = 224},
+	["z"] = {["x"] = 112, ["y"] = 224},
+	--accents
+	["Ä"] = {["x"] = 8, ["y"] = 240},
+	["Ö"] = {["x"] = 16, ["y"] = 240},
+	["Ü"] = {["x"] = 24, ["y"] = 240},
+	["ä"] = {["x"] = 32, ["y"] = 240},
+	["ö"] = {["x"] = 40, ["y"] = 240},
+	["ü"] = {["x"] = 48, ["y"] = 240},
+	["efa"] = {["x"] = 88, ["y"] = 16}, --é
+	["eba"] = {["x"] = 80, ["y"] = 16}, --è
+	
+	--misc2
+	["▶"] = {["x"] = 120, ["y"] = 224},
+	[":"] = {["x"] = 0, ["y"] = 240},
+	["↑"] = {["x"] = 56, ["y"] = 240},
+	["↓"] = {["x"] = 64, ["y"] = 240},
+	["←"] = {["x"] = 72, ["y"] = 240},
+	["→"] = {["x"] = 80, ["y"] = 240},
+	["+"] = {["x"] = 88, ["y"] = 240},
+	[" "] = {["x"] = 0, ["y"] = 0},
+}
+
 --[[
 things to fix (at a later date):
  - logo_shine not properly masking onto pokemon_ruby.png
@@ -21,7 +129,7 @@ local skip = false
 local maxX = 240
 local maxY = 144
 
-local txtbox = 11
+local txtbox = 7
 
 local function clearGraphics()
 	for i, v in ipairs(script.Parent.game.loadedassets:GetChildren()) do
@@ -163,12 +271,18 @@ local function batchRenderFromSameLinkInBounds(list, link) --each entry follows 
 end
 
 local function createMenuBox(link, x, y, lengthofmiddlex, lengthofmiddley, imgColour) --x&y is origin at top left
+	local newf = Instance.new("Frame")
+	newf.Size = UDim2.new(1,0,1,0)
+	newf.Position = UDim2.new(0,0,0,0)
+	newf.AnchorPoint = Vector2.new(0,0)
+	newf.BackgroundTransparency = 1
+	newf.Parent =  script.Parent.game.loadedassets
 	local dictionary = {
 		["topleft"] = Vector2.new(0, 0), ["topmiddle"] = Vector2.new(8, 0), ["topright"] = Vector2.new(16, 0), ["middleleft"] = Vector2.new(0, 8), ["middlemiddle"] = Vector2.new(8, 8), ["middleright"] = Vector2.new(16, 8), ["bottomleft"] = Vector2.new(0, 16), ["bottommiddle"] = Vector2.new(8, 16), ["bottomright"] = Vector2.new(16, 16), }
 	local size = 8
 	local function addToRender(listToRender, cx, cy, offset)
 		table.insert(listToRender, {
-			["x"] = cx, ["y"] = cy, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = offset, ["frameRectSize"] = Vector2.new(size, size), ["callback"] = function(ni) ni.ImageColor3 = imgColour end,
+			["x"] = cx, ["y"] = cy, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = offset, ["frameRectSize"] = Vector2.new(size, size), ["callback"] = function(ni) ni.ImageColor3 = imgColour ni.Parent = newf end,
 		})
 	end
 	local listToRender = {}
@@ -185,9 +299,72 @@ local function createMenuBox(link, x, y, lengthofmiddlex, lengthofmiddley, imgCo
 	cx = x addToRender(listToRender, cx, cy, dictionary.bottomleft) cx += size
 	for ii=1, lengthofmiddlex do addToRender(listToRender, cx, cy, dictionary.bottommiddle) cx += size end
 	addToRender(listToRender, cx, cy, dictionary.bottomright)
-	local allReturned = batchRenderFromSameLinkInBounds(listToRender, link)
-	return allReturned
+	batchRenderFromSameLinkInBounds(listToRender, link)
+	return newf
 end
+
+local function drawText(font, txt, x, y, colour)
+	local newf = Instance.new("Frame")
+	newf.Size = UDim2.new(1,0,1,0)
+	newf.Position = UDim2.new(0,0,0,0)
+	newf.AnchorPoint = Vector2.new(0,0)
+	newf.BackgroundTransparency = 1
+	newf.Name = txt
+	local cx = x
+	local cy = y
+	for i, v in ipairs(txt:split(`\n`)) do
+		renderImgInBounds(pbu.."/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+			ni.Parent = newf
+			ni.ImageColor3 = colour
+		end)
+		
+		cx+=font3Width
+	end
+	newf.Parent = script.Parent.game.loadedassets
+	return newf
+end
+
+local function drawScrollingText(font, txt, x, y, colour)
+	local newf = Instance.new("Frame")
+	newf.Size = UDim2.new(1,0,1,0)
+	newf.Position = UDim2.new(0,0,0,0)
+	newf.AnchorPoint = Vector2.new(0,0)
+	newf.BackgroundTransparency = 1
+	newf.Name = txt
+	local scrollTxt = coroutine.create(function()
+		local cx = x
+		local cy = y
+		for i, v in ipairs(txt:split(`\n`)) do
+			renderImgInBounds(pbu.."/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+				ni.Parent = newf
+				ni.ImageColor3 = colour
+			end)
+
+			cx+=font3Width
+			wait(0.05)
+		end
+	end)
+	coroutine.resume(scrollTxt)
+	newf.Parent = script.Parent.game.loadedassets
+	return newf
+end
+
+--[[
+local function drawHighlightBox(x, y, lengthofmiddlex, lengthofmiddley) --text boxes
+	local sizex = (2+lengthofmiddlex)*8
+	local sizey = (2+lengthofmiddley)*8
+	x += 1
+	y += 1
+	sizex -= 2
+	sizey -= 2
+	
+	print(sizex)
+	
+	return renderImg("/assets/titlescreen/brightwhitelight.png", x, y, sizex, sizey, topoption.Parent = newfolderVector2.new(0, 0), function(ni)
+		ni.ImageTransparency = 0.5
+	end)
+end
+--]]
 
 local function playTheGame()
 	game.ReplicatedStorage["remote events (RARE!!!!)"]["gib welcome badge"]:FireServer()
@@ -197,23 +374,28 @@ local function playTheGame()
 		skip = false
 		print("cycle")
 		local function boot()
-			local newsound = Instance.new("Sound")
-			newsound.SoundId = pbu.."/music/1.mp3"
-			newsound.Volume = 1
+			if start == false then
+				local newsound = Instance.new("Sound")
+				newsound.SoundId = pbu.."/music/1.mp3"
+				newsound.Volume = 1
 
-			newsound.Parent = script.Parent
-			newsound:Play()
-			return newsound
+				newsound.Parent = script.Parent
+				newsound:Play()
+				return newsound
+			end
 		end
 
 		local function boot2(newsound)
-			newsound.SoundId = pbu.."/music/2.mp3"
-			newsound:Play()
+			if start == false then
+				newsound.SoundId = pbu.."/music/2.mp3"
+				newsound:Play()
+			end
 		end
 
 		local function titleScreen(newsound)
 			if start == false and skip == false then
 				start = true
+				clearGraphics()
 				newsound.SoundId = pbu.."/music/3.mp3"
 				newsound:Play()
 				
@@ -287,7 +469,6 @@ local function playTheGame()
 			if inp.UserInputType == Enum.UserInputType.Keyboard then
 				if start == true and began == false then
 					if inp.KeyCode == inputs.scheme1.interact or inp.KeyCode == inputs.scheme1.cancel or inp.KeyCode == inputs.scheme1.menu then
-						began = true
 						local twni = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 						local gA = {} gA.Volume = 0
 						
@@ -300,14 +481,53 @@ local function playTheGame()
 								wait(.1)
 								genericColorTween(script.Parent.game.overlay, Color3.new(0.309804, 0.32549, 0.560784), 2)
 								--main titlescreen
-								print("achievd")
+								began = true
 								local bg = renderImg(pbu.."/assets/titlescreen/brightwhitelight.png", 0 ,0, maxX, maxY, Vector2.new(0 ,0))
 								bg.BackgroundColor3 = Color3.new(0.309804, 0.32549, 0.560784)
 								bg.ImageTransparency = 1
 								bg.BackgroundTransparency = 0
 								script.Parent.game.overlay.BackgroundTransparency = 1
-								local topoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 1, Color3.new(0.5 ,0.5 ,0.5))
-								local middleoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 25, 26 ,1, Color3.new(0.5 ,0.5 ,0.5))
+								local folder = Instance.new("Folder")
+								folder.Name = "btns"
+								folder.Parent = script.Parent.game.loadedassets
+								local function renderNew(selected)
+									local newfolder = Instance.new("Folder")
+									newfolder.Name = folder.Name
+									newfolder.Parent = folder.Parent
+									local c1 = Color3.new(0.5, 0.5, 0.5)
+									local c2 = Color3.new(0.5, 0.5, 0.5)
+									local c3 = Color3.new(0.5, 0.5, 0.5)
+									if selected == 1 then c1 = Color3.new(1, 1, 1) end
+									if selected == 2 then c2 = Color3.new(1, 1, 1) end
+									if selected == 3 then c3 = Color3.new(1, 1, 1) end
+									local topoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 6, c1)
+									local middleoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65, 26 ,2, c2)
+									local bottomoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65+32, 26 ,2, c3)
+									local txt = drawText("font3_dark", "C\nO\nN\nT\nI\nN\nU\nE", 16, 9, Color3.new(selected-0, selected-0, selected-0))
+									local plrtitle = drawText("font3_new", "P\nL\nA\nY\nE\nR", 16, 9+16, Color3.new(0.129412, 0.517647, 1))
+									local pkdxtitle = drawText("font3_new", "P\nO\nK\nefa\nD\nE\nX", 16, 9+32, Color3.new(0.129412, 0.517647, 1))
+									local txt2 = drawText("font3_dark", "N\nE\nW\n \nG\nA\nM\nE", 16, 73, Color3.new(selected-1, selected-1, selected-1))
+									local txt3 = drawText("font3_dark", "O\nP\nT\nI\nO\nN\nS", 16, 65+23+8+8, Color3.new(selected-2, selected-2, selected-2))
+									folder:Destroy()
+								end
+								local selected = 1
+								renderNew(selected)
+								drawScrollingText("font3_dark", "R\ne\na\nl\n \nt\ne\ns\nt\ni\nn\ng\n \nt\ne\nx\nt", 0, 0, Color3.new(1, 1, 1))
+								local connection = uis.InputBegan:Connect(function(inp)
+									if start == true and began == true then
+										if inp.KeyCode == inputs.scheme1.up then
+											selected -= 1
+											if selected == 0 then selected = 3 end
+											renderNew(selected)
+										elseif inp.KeyCode == inputs.scheme1.down then
+											selected += 1
+											if selected == 4 then selected = 1 end
+											renderNew(selected)
+										end
+									end
+									
+								end)
+								--local highlight = drawHighlightBox(8, 1, 26, 1)
 							end)
 						end)
 					end
