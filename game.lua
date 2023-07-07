@@ -28,7 +28,7 @@ local inDialogue = false
 local maxX = 240
 local maxY = 160
 
-local txtbox = 2
+local txtbox = 1
 
 local function clearGraphics()
 	for i, v in ipairs(script.Parent.game.loadedassets:GetChildren()) do
@@ -322,7 +322,7 @@ local function dialogueBox(font, txt, endable, callback)
 				local connect
 				connect = uis.InputBegan:Connect(function(inp)
 					if inp.KeyCode == inputs.scheme1.interact or inp.KeyCode == inputs.scheme1.cancel then
-						print("sdsafdvefrgfeeeeeeeeeeeeeeeeetg")
+						playSFX("sel.wav")
 						connect:Disconnect()
 						callback(newf, box)
 					end
