@@ -26,7 +26,7 @@ local skip = false
 local maxX = 240
 local maxY = 160
 
-local txtbox = 1
+local txtbox = 2
 
 local function clearGraphics()
 	for i, v in ipairs(script.Parent.game.loadedassets:GetChildren()) do
@@ -230,19 +230,18 @@ local function drawText(font, txt, x, y, colour)
 			cy += font3Height+1
 			cx = x-font3Width
 		else
-			renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+			renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
 				ni.Parent = newf
 				ni.ImageColor3 = colour
 			end)
+			cx+=font3[v].w -1
 		end
-		
-		cx+=font3Width-1
 	end
 	newf.Parent = script.Parent.game.loadedassets
 	return newf
 end
 
-local function drawScrollingText(font, txt, x, y, colour)
+local function drawScrollingText(font, txt, x, y, colour, endable, callback)
 	local newf = Instance.new("Frame")
 	newf.Size = UDim2.new(1,0,1,0)
 	newf.Position = UDim2.new(0,0,0,0)
@@ -252,20 +251,51 @@ local function drawScrollingText(font, txt, x, y, colour)
 	local scrollTxt = coroutine.create(function()
 		local cx = x
 		local cy = y
-		for i, v in ipairs(txt:split(`\n`)) do
+		local str = txt:split(`\n`)
+		for i, v in ipairs(str) do
 			if v == "nw" then
 				cy += font3Height+1
-				cx = x-font3Width
+				cx = x
 			else
-				renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 8, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+				renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
 					ni.Parent = newf
 					ni.ImageColor3 = colour
 				end)
+				cx+=font3[v].w -1
 			end
-
-			cx+=font3Width-1
+			
 			wait(0.05)
 		end
+		pcall(function()
+			if endable == false then
+				renderImgInBounds("/assets/fonts/down_arrow.png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(0, 0), Vector2.new(8, 16), function(ni)
+					ni.Parent = newf
+					ni.ImageColor3 = colour
+					while wait(0.03) do
+						ni.ImageRectOffset += Vector2.new(0, 16)
+						if ni.ImageRectOffset >= Vector2.new(0, 80) then
+							ni.ImageRectOffset = Vector2.new(0,0)
+						end
+					end
+				end)
+				local connect
+				connect = uis.InputBegan:Connect(function(inp)
+					if inp.KeyCode == inputs.scheme1.interact or inp.KeyCode == inputs.scheme1.cancel then
+						connect:Disconnect()
+						callback(newf)
+					end
+				end)
+			else
+				local connect
+				connect = uis.InputBegan:Connect(function(inp)
+					if inp.KeyCode == inputs.scheme1.interact then
+						connect:Disconnect()
+						callback(newf)
+					end
+				end)
+			end
+		end)
+		
 	end)
 	coroutine.resume(scrollTxt)
 	newf.Parent = script.Parent.game.loadedassets
@@ -413,61 +443,62 @@ local function playTheGame()
 								wait(.1)
 								print("dasfadf")
 								local box = createMenuBox("/assets/ui/"..txtbox..".png", 16, maxY-48, 24, 4, Color3.new(1,1,1)) --l = 208px
-								drawScrollingText("font3_dark", "0\n1\n2\n3\n4\n5\n6\n7\n8\n9\nA\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ\n \nh\ne\nl\np\n \nm\ne\nnw\na\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk\nl\nm\nn\no\np\nq\nr\ns\nt\nu\nv\nw\nx\ny\nz", 24, maxY-40, Color3.new(1,1,1))
-								wait(30)
-								
-								box:Destroy()
-								local folder = Instance.new("Folder")
-								folder.Name = "btns"
-								folder.Parent = script.Parent.game.loadedassets
-								local function renderNew(selected)
-									local newfolder = Instance.new("Folder")
-									newfolder.Name = folder.Name
-									newfolder.Parent = folder.Parent
-									local c1 = Color3.new(0.5, 0.5, 0.5)
-									local c2 = Color3.new(0.5, 0.5, 0.5)
-									local c3 = Color3.new(0.5, 0.5, 0.5)
-									local csn = Color3.new(1, 1, 1)
-									local cnsn = Color3.new(0.5, 0.5, 0.5)
-									local mcsn = Color3.new(0.129412, 0.517647, 1)
-									local mcnsn = Color3.new(0.064706, 0.2588235, 0.5)
-									if selected == 1 then c1 = Color3.new(1, 1, 1) end
-									if selected == 2 then c2 = Color3.new(1, 1, 1) end
-									if selected == 3 then c3 = Color3.new(1, 1, 1) end
-									local function getclr(selectedReq, cs, cns)
-										if selected == selectedReq then
-											return cs
-										else
-											return cns
+								local testtxt = drawScrollingText("font3_dark", "T\nh\ne\n \ni\nn\nt\ne\nr\nn\na\nl\n \nb\na\nt\nt\ne\nr\ny\n \nh\na\ns\n \nr\nu\nn\n \nd\nr\ny\n.\nnw\nT\nh\ne\n \ng\na\nm\ne\n \nc\na\nn\n \nb\ne\n \np\nl\na\ny\ne\nd\n.", 24, maxY-40, Color3.new(1,1,1), false, function(thisTxt)
+									box:Destroy()
+									thisTxt:Destroy()
+									local folder = Instance.new("Folder")
+									folder.Name = "btns"
+									folder.Parent = script.Parent.game.loadedassets
+									local function renderNew(selected)
+										local newfolder = Instance.new("Folder")
+										newfolder.Name = folder.Name
+										newfolder.Parent = folder.Parent
+										local c1 = Color3.new(0.5, 0.5, 0.5)
+										local c2 = Color3.new(0.5, 0.5, 0.5)
+										local c3 = Color3.new(0.5, 0.5, 0.5)
+										local csn = Color3.new(1, 1, 1)
+										local cnsn = Color3.new(0.5, 0.5, 0.5)
+										local mcsn = Color3.new(0.129412, 0.517647, 1)
+										local mcnsn = Color3.new(0.064706, 0.2588235, 0.5)
+										if selected == 1 then c1 = Color3.new(1, 1, 1) end
+										if selected == 2 then c2 = Color3.new(1, 1, 1) end
+										if selected == 3 then c3 = Color3.new(1, 1, 1) end
+										local function getclr(selectedReq, cs, cns)
+											if selected == selectedReq then
+												return cs
+											else
+												return cns
+											end
 										end
+										local topoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 6, c1) topoption.Parent = newfolder
+										local middleoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65, 26 ,2, c2) middleoption.Parent = newfolder
+										local bottomoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65+32, 26 ,2, c3) bottomoption.Parent = newfolder
+										local txt = drawText("font3_dark", "C\nO\nN\nT\nI\nN\nU\nE", 16, 9, getclr(1, csn, cnsn)) txt.Parent = topoption
+										local plrtitle = drawText("font3_new", "P\nL\nA\nY\nE\nR", 16, 9+16, getclr(1, mcsn, mcnsn)) plrtitle.Parent = topoption
+										local pkdxtitle = drawText("font3_new", "P\nO\nK\nefa\nD\nE\nX", 16, 9+32, getclr(1, mcsn, mcnsn)) pkdxtitle.Parent = topoption
+										local txt2 = drawText("font3_dark", "N\nE\nW\n \nG\nA\nM\nE", 16, 73, getclr(2, csn, cnsn)) txt2.Parent = middleoption
+										local txt3 = drawText("font3_dark", "O\nP\nT\nI\nO\nN\nS", 16, 65+23+8+8, getclr(3, csn, cnsn)) txt3.Parent = bottomoption
+										folder:Destroy()
 									end
-									local topoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 6, c1) topoption.Parent = newfolder
-									local middleoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65, 26 ,2, c2) middleoption.Parent = newfolder
-									local bottomoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65+32, 26 ,2, c3) bottomoption.Parent = newfolder
-									local txt = drawText("font3_dark", "C\nO\nN\nT\nI\nN\nU\nE", 16, 9, getclr(1, csn, cnsn)) txt.Parent = topoption
-									local plrtitle = drawText("font3_new", "P\nL\nA\nY\nE\nR", 16, 9+16, getclr(1, mcsn, mcnsn)) plrtitle.Parent = topoption
-									local pkdxtitle = drawText("font3_new", "P\nO\nK\nefa\nD\nE\nX", 16, 9+32, getclr(1, mcsn, mcnsn)) pkdxtitle.Parent = topoption
-									local txt2 = drawText("font3_dark", "N\nE\nW\n \nG\nA\nM\nE", 16, 73, getclr(2, csn, cnsn)) txt2.Parent = middleoption
-									local txt3 = drawText("font3_dark", "O\nP\nT\nI\nO\nN\nS", 16, 65+23+8+8, getclr(3, csn, cnsn)) txt3.Parent = bottomoption
-									folder:Destroy()
-								end
-								local selected = 1
-								renderNew(selected)
-								--drawScrollingText("font3_dark", "R\ne\na\nl\n \nt\ne\ns\nt\ni\nn\ng\n \nt\ne\nx\nt", 0, 0, Color3.new(1, 1, 1))
-								local connection = uis.InputBegan:Connect(function(inp)
-									if start == true and began == true then
-										if inp.KeyCode == inputs.scheme1.up then
-											selected -= 1
-											if selected == 0 then selected = 3 end
-											renderNew(selected)
-										elseif inp.KeyCode == inputs.scheme1.down then
-											selected += 1
-											if selected == 4 then selected = 1 end
-											renderNew(selected)
+									local selected = 1
+									renderNew(selected)
+									--drawScrollingText("font3_dark", "R\ne\na\nl\n \nt\ne\ns\nt\ni\nn\ng\n \nt\ne\nx\nt", 0, 0, Color3.new(1, 1, 1))
+									local connection = uis.InputBegan:Connect(function(inp)
+										if start == true and began == true then
+											if inp.KeyCode == inputs.scheme1.up then
+												selected -= 1
+												if selected == 0 then selected = 3 end
+												renderNew(selected)
+											elseif inp.KeyCode == inputs.scheme1.down then
+												selected += 1
+												if selected == 4 then selected = 1 end
+												renderNew(selected)
+											end
 										end
-									end
-									
+
+									end)
 								end)
+								
 								--local highlight = drawHighlightBox(8, 1, 26, 1)
 							end)
 						end)
