@@ -67,28 +67,30 @@ local function genericPosTween(obj, newx, newy, timeToSpend, callback)
 		local tween = twns:Create(obj, tweeninfo, g)
 		tween:Play()
 		wait(timeToSpend)
-		callback()
+		pcall(function() callback() end)
 	end)
 	coroutine.resume(a)
 end
 
 local function genericOpacityTween(obj, newopac, clk, callback)
-	if obj:IsA("Frame") then
-		local base = {} base.opac = obj.BackgroundTransparency
-		for i=1, clk do
-			wait()
-			local c = (newopac - base.opac)/clk
-			obj.BackgroundTransparency += c
+	coroutine.resume(coroutine.create(function()
+		if obj:IsA("Frame") then
+			local base = {} base.opac = obj.BackgroundTransparency
+			for i=1, clk do
+				wait()
+				local c = (newopac - base.opac)/clk
+				obj.BackgroundTransparency += c
+			end
+		elseif obj:IsA("ImageLabel") then
+			local base = {} base.opac = obj.ImageTransparency
+			for i=1, clk do
+				wait()
+				local c = (newopac - base.opac)/clk
+				obj.ImageTransparency += c
+			end
 		end
-	elseif obj:IsA("ImageLabel") then
-		local base = {} base.opac = obj.ImageTransparency
-		for i=1, clk do
-			wait()
-			local c = (newopac - base.opac)/clk
-			obj.ImageTransparency += c
-		end
-	end
-	pcall(callback)
+		pcall(callback)
+	end))
 end
 
 local function batchGenericOpacityTween(objs, oldopac, newopac, clk, callback)
@@ -428,10 +430,10 @@ local function playTheGame()
 				local flash = renderImg("/assets/titlescreen/brightwhitelight.png", 0, 0, maxX, maxY, Vector2.new(0, 0))
 				local title = renderMaskImg("/assets/titlescreen/title.png", maxX/2, 68, 175, 64, Vector2.new(0.5, .5))
 				local shine = renderMaskImg("/assets/titlescreen/logo_shine.png", -85, 0, 85, maxY, Vector2.new(0, 0))
-				local versxbase = 0
+				local versxbase = (maxX/2)-(64/2)
 				local vers = createElemFromBatchImgs({
-					{["x"] = versxbase, ["y"] = 0, ["sizex"] = 46, ["sizey"] = 28, ["anchor"] = Vector2.new(0,0), ["frameRectOffset"] = Vector2.new(18, 2), ["frameRectSize"] = Vector2.new(46,28), ["callback"] = "",},
-					{["x"] = versxbase+46, ["y"] = 0, ["sizex"] = 35, ["sizey"] = 28, ["anchor"] = Vector2.new(0,0), ["frameRectOffset"] = Vector2.new(0, 34), ["frameRectSize"] = Vector2.new(45,28), ["callback"] = "",}
+					{["x"] = versxbase, ["y"] = 10, ["sizex"] = 46, ["sizey"] = 28, ["anchor"] = Vector2.new(0,0), ["frameRectOffset"] = Vector2.new(18, 2), ["frameRectSize"] = Vector2.new(46,28), ["callback"] = (function(ni) ni.ImageTransparency = 1 end),},
+					{["x"] = versxbase+46, ["y"] = 10, ["sizex"] = 35, ["sizey"] = 28, ["anchor"] = Vector2.new(0,0), ["frameRectOffset"] = Vector2.new(0, 34), ["frameRectSize"] = Vector2.new(45,28), ["callback"] = (function(ni) ni.ImageTransparency = 1 end),}
 				}, "/assets/titlescreen/version.png")
 				shine.Parent = title
 				
@@ -444,22 +446,30 @@ local function playTheGame()
 					shine:TweenPosition(UDim2.new(1, 0, 0, 0))
 					wait(1.45)
 					flash.ImageTransparency = 1
-					genericOpacityTween(flash, 0, 10)
-					wait()
-					shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
-					shine:TweenPosition(UDim2.new(1, 0, 0, 0))
-					wait(0.05)
-					genericOpacityTween(flash, 1, 20)
-					wait(0.6)
-					genericOpacityTween(flash, 0, 10)
-					shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
-					wait(0.05)
-					shine:TweenPosition(UDim2.new(1, 0, 0, 0))
-					genericOpacityTween(flash, 1, 20)
-					wait(0.5)
-					genericPosTween(title, maxX/2, 35, 1, function()
-						wait(1)
-						print("maintitlescreen")
+					genericOpacityTween(flash, 0, 10, function()
+						wait()
+						shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
+						shine:TweenPosition(UDim2.new(1, 0, 0, 0))
+						wait(0.05)
+						genericOpacityTween(flash, 1, 20, function()
+							wait(0.6)
+							genericOpacityTween(flash, 0, 10, function()
+								shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
+								wait(0.05)
+								shine:TweenPosition(UDim2.new(1, 0, 0, 0))
+								genericOpacityTween(flash, 1, 20, function()
+									wait(0.5)
+									for i, v in ipairs(vers:GetChildren()) do
+										genericOpacityTween(v, 0, 30)
+										genericPosTween(v, v.Position.X.Scale*maxX, 55, 1)
+									end
+									genericPosTween(title, maxX/2, 35, 1, function()
+										wait(1)
+										print("maintitlescreen")
+									end)
+								end)
+							end)
+						end)
 					end)
 				end)
 				
