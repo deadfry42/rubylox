@@ -16,7 +16,7 @@ The reason you need to install a patch is because this is the way I am trying to
 
 (I am not a lawyer. If you are a lawyer, please let me know if this'd work)
 
-Please join the discord server if you'd like to join (and install the patch).
+Please join the discord server if you'd like to play the game / talk about this game w/ me and some others maybe
 https://discord.gg/RfHFJ59khG
 
 ## This project is incredibly incomplete
