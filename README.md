@@ -10,6 +10,7 @@ I am always learning throughout this project, so things will be inconsistent.
 
  - This project started as a means to challenge myself. How? Roblox's 2D engine. Roblox doesn't have a fantastical 2D engine, so I thought maybe I could try and recreate a really good 2D game that I own in that engine (I don't know how this came to mind - my mind is weird)
 
+ - In the next section, I will talk about how the game's assets are going to be stored. I need to first say that if you get ahold of any patch that contains any '_MACOSX' folder, or any other folder relating to unix, that is because my main computers as of now are unix systems. Final releases should have this removed, but if you see any folder like this, just remove it. It's just there to help MACOSX keep folders in a certain position (i think)
 
 ## Assets:
 This game will require installing a patch to the Roblox internal game files. This process will differ between Windows & Mac, but there are tutorials on how to in the discord below.
