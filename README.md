@@ -1,32 +1,33 @@
 # rubylox
-Recreating Pokemon Ruby in the Roblox game engine (engine only, no ROM)
+Recreating Pokemon Ruby to the Roblox game engine (engine only, no ROM)
+***EXTREMELY INCOMPLETE*** (~700 lines as of writing)
 
-## Note:
-Please do not use my code as an example. I am not necessarily a good programmer and when it comes to translating another person's work, it usually isn't for me. I am doing this solely as a passion project.
+## Notes & Warnings:
+ - **DO NOT** use *MY* code as an example. I am still learning, and I know that my code is almost never optimised.
+I am always learning throughout this project, so things will be inconsistent.
 
-The main reason why this github repo was made is was to archive my engine code, just to make sure I have a backup of my progress
+ - This is **NOT** a direct port. That would be pretty much impossible. Even though i would love to make a gba emulator, doing that is WAYYY out of my skill range to be able to do that. As of now, i'm sticking to pure recreation. 
+
+ - This project started as a means to challenge myself. How? Roblox's 2D engine. Roblox doesn't have a fantastical 2D engine, so I thought maybe I could try and recreate a really good 2D game that I own in that engine (I don't know how this came to mind - my mind is weird)
 
 
-### Assets:
+## Assets:
 This game will require installing a patch to the Roblox internal game files. This process will differ between Windows & Mac, but there are tutorials on how to in the discord below.
-The reason you need to install a patch is because this is the way I am trying to get past copyright. All of the copyrighted assets are not hosted on Roblox and instead in the patch, which makes the assets unnaccesible for regular users. Therefore, because the assets are NOT anywhere publically, I am essentially voiding copyright.
+The reason you need to install a patch is because this is the way I am trying to get past copyright. All of the copyrighted assets are not hosted on Roblox and instead in the patch, which makes the assets unnaccesible for regular users. Therefore, because the assets are NOT stored anywhere within the game code, I am essentially (theoretically) voiding copyright.
 
- - The patch is made on MacOSX, so if you download or get ahold of a patch with a folder called '_MACOSX', do not worry.
- - I am unsure if the same may be true for Linux, but if there is any other folder relating to 'Linux' or more specifically 'Ubuntu', that is my main machine.
+ - If I ever get a takedown request from TPCi, or if roblox takes it down, I will keep it that way. Unfortunately, I don't want to ever be sued (sorry to dissapoint)
 
 (I am not a lawyer. If you are a lawyer, please let me know if this'd work)
 
-Please join the discord server if you'd like to play the game / talk about this game w/ me and some others maybe
+Please join the discord server if you'd like to play the game / talk about this game w/ me and some others maybe:
 https://discord.gg/RfHFJ59khG
 
-## This project is incredibly incomplete
-I only started a few days ago (as of 5th July 2023)
-This means that literately only a few hundred lines are actually written.
-
-### THIS IS NOT A DIRECT PORT
-Exactly porting Pokemon Ruby to Roblox is basically impossible. It would be, theoretically, but there are features like proper image masking that Roblox simply doesn't support (eg. palette swapping). I started this project to see if i could challenge myself with these limitations. (Yes, I know roblox is capable of a lot of things, but it is primarily a 3D engine, not a 2D one)
-This means the assets provided in the patch aren't exactly a one to one grab from the actual game. Due to the palette swapping not being available, the sprites have to be tweaked in order to make it as close as possible. Unfortunately, due to the difference in programming languages from C to Lua, some things I will not be able to recreate perfectly, and so it may take a few iterations and hours (or even days) of work to try and get it down to as perfect as possible (i'm generally not a perfectionist but for developing games, I am.)
-
-# Support me!
+## Support me!
 There is currently no way to support me as this is only a passion project I started for fun, and I don't think i need any support atm.
 There will not be any monetization for the game. This is because the game is literately ripping off a very much still copyrighted series, and even though i'm trying to bypass it, it would feel wrong if I profitted off of a trademark (that and, i'm not sure if this game will get much if any recognition online)
+
+
+
+
+
+pls add linux support to roblox - it would make my life 1000 times easier (i'm doing this on mac)
