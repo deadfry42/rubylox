@@ -20,7 +20,7 @@ local textspeed = "slow"
 local txtbox = 1
 
 -- triggers --
-local inDialogue = script.Parent.Triggers.inDialogue.Value
+local inDialogue = script.Parent.Triggers.inDialogue
 
 module.clearGraphics = function()
 	for i, v in ipairs(script.Parent.Parent.game.loadedassets:GetChildren()) do
@@ -291,7 +291,7 @@ module.drawScrollingText = function(font, txt, x, y, colour, endable, callback)
 end
 
 module.dialogueBox = function(font, txt, endable, speed, callback)
-	inDialogue = true
+	inDialogue.Value = true
 	local font3Height = fontrom.font3.height
 	local font3Width = fontrom.font3.width
 	local font3 = fontrom.font3.offsets
@@ -322,7 +322,7 @@ module.dialogueBox = function(font, txt, endable, speed, callback)
 			end
 
 			if uis:IsKeyDown(inputs.scheme1.cancel) then
-				task.wait(fontrom.scrollspeeds[textspeed]/2)
+				task.wait(fontrom.scrollspeeds["megascroll"])
 			else
 				task.wait(fontrom.scrollspeeds[textspeed])
 			end
@@ -355,7 +355,7 @@ module.dialogueBox = function(font, txt, endable, speed, callback)
 				connect = uis.InputBegan:Connect(function(inp)
 					if inp.KeyCode == inputs.scheme1.interact then
 						connect:Disconnect()
-						inDialogue = false
+						inDialogue.Value = false
 						callback(newf, box)
 					end
 				end)
@@ -364,6 +364,21 @@ module.dialogueBox = function(font, txt, endable, speed, callback)
 	end)
 	coroutine.resume(scrollTxt)
 	newf.Parent = script.Parent.Parent.game.loadedassets
+end
+
+module.drawHighlightBox = function(x, y, lengthofmiddlex, lengthofmiddley) --text boxes
+	local sizex = (2+lengthofmiddlex)*8
+	local sizey = (2+lengthofmiddley)*8
+	x += 1
+	y += 1
+	sizex -= 2
+	sizey -= 2
+
+	print(sizex)
+
+	return module.renderImg("/assets/titlescreen/brightwhitelight.png", x, y, sizex, sizey, Vector2.new(0, 0), function(ni)
+		ni.ImageTransparency = 0.5
+	end)
 end
 
 return module
