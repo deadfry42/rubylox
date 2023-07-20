@@ -41,26 +41,7 @@ things to fix (at a later date):
 local start = false
 local began = false
 local skip = false
-local inDialogue = script.Triggers.inDialogue.Value
-
-
-
---[[
-local function drawHighlightBox(x, y, lengthofmiddlex, lengthofmiddley) --text boxes
-	local sizex = (2+lengthofmiddlex)*8
-	local sizey = (2+lengthofmiddley)*8
-	x += 1
-	y += 1
-	sizex -= 2
-	sizey -= 2
-	
-	print(sizex)
-	
-	return renderImg("/assets/titlescreen/brightwhitelight.png", x, y, sizex, sizey, topoption.Parent = newfolderVector2.new(0, 0), function(ni)
-		ni.ImageTransparency = 0.5
-	end)
-end
---]]
+local inDialogue = script.Triggers.inDialogue
 
 local function playTheGame()
 	game.ReplicatedStorage["remote events (RARE!!!!)"]["gib welcome badge"]:FireServer()
@@ -140,20 +121,77 @@ local function playTheGame()
 										print("maintitlescreen")
 										shine:Destroy()
 										flash:Destroy()
-										local bubles = engine.renderImgInBounds("/assets/titlescreen/debugmonster.png", -1, 0, 32, 32, Vector2.new(0, 0), Vector2.new(7, 0), Vector2.new(32, 32))
+										
+										--[[ shelve for a rainy day
 										local prevY = 0
-										for i=1, 5 do
-											local prevX = -(31/maxX)
+										local blox = {}
+										
+										local masterY = 0
+										for i=1, 10 do
+											local x = 0
 											for i=1, 8 do
-												local clon = bubles:Clone()
-												clon.Position += UDim2.new(prevX+(31/maxX), 0, prevY, 0)
-												clon.ZIndex = -10
-												clon.Parent = script.Parent.game.loadedassets
-												prevX = clon.Position.X.Scale
+												local newf = Instance.new("Frame")
+												newf.BackgroundTransparency = 1
+												newf.Size = UDim2.new(1,0,1,0)
+												newf.AnchorPoint = Vector2.new(0,0)
+												newf.Position = UDim2.new(0,0,0,0)
+												newf.Parent = script.Parent.game.loadedassets
+												newf.ZIndex = -2000
+												table.insert(blox, newf)
+												local y = 0
+												for i=1, 32 do
+													local buble = engine.renderImgInBounds("/assets/titlescreen/debugmonster.png", -1+x, 0+y+masterY, 32, 1, Vector2.new(0, 0), Vector2.new(7, 0+y), Vector2.new(32, 1), function(ni)
+														ni.Name = i
+														ni.Parent = newf
+														ni.ImageTransparency = 0.5
+														ni.ZIndex = -1000
+														coroutine.resume(coroutine.create(function()
+															for i=1, y do
+																wait()
+															end
+															local loop = 5
+															local move = 1/maxX
+															for i=1, loop do
+																ni.Position+=UDim2.new(move,0,0,0)
+																wait()
+															end
+															while start == true do
+																for i=1, loop*2 do
+																	ni.Position-=UDim2.new(move,0,0,0)
+																	wait()
+																end
+																for i=1, loop*2 do
+																	ni.Position+=UDim2.new(move,0,0,0)
+																	wait()
+																end
+															end
+														end))
+													end)
+													y+=1
+												end
+												x+=31
 											end
-											prevY+=(32/maxY)
+											masterY+=32
 										end
-										bubles:Destroy()
+										for i, v in ipairs(blox) do
+											coroutine.resume(coroutine.create(function()
+												while start == true do
+													v.Position -= UDim2.new(0, 0, 1/maxY, 0)
+													if v.Position.Y.Scale <= -1 then
+														v.Position += UDim2.new(0, 0, 2, 0)
+													end
+													wait()
+												end
+											end))
+											
+										end
+										]]
+										local x = 0
+										for i=1, 10 do
+											local ground = engine.renderImgInBounds("/assets/titlescreen/debugmonster.png", x, maxY-24, 24, 16, Vector2.new(0,0), Vector2.new(88, 32), Vector2.new(24, 16))
+											local groundground = engine.renderImgInBounds("/assets/titlescreen/debugmonster.png", x, maxY-8, 24, 8, Vector2.new(0,0), Vector2.new(88, 40), Vector2.new(24, 8))
+											x+=24
+										end
 									end)
 								end)
 							end)
@@ -315,7 +353,7 @@ local function playTheGame()
 						end)
 					end
 				else
-					if began == true and start == true and inDialogue == false and inp.KeyCode == inputs.scheme1.cancel then
+					if began == true and start == true and inDialogue.Value == false and inp.KeyCode == inputs.scheme1.cancel then
 						engine.playSFX("sel.wav")
 						newsound:Stop()
 						newsound.Volume = 1
