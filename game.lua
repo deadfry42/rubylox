@@ -1,12 +1,24 @@
+--includes
 local pbu = require(game.ReplicatedStorage.patchbaseurl)
 local inputs = require(game.ReplicatedStorage.inputs)
 local fontrom = require(game.ReplicatedStorage.fontrom)
 
+--services
 local twns = game:GetService("TweenService")
 local uis = game:GetService("UserInputService")
 local cntp = game:GetService("ContentProvider")
 local bs = game:GetService("BadgeService")
 
+--game settings compiled at runtime
+local versionPng = "v1.png"
+local maxX = 240
+local maxY = 160
+
+--settings
+local textspeed = "slow"
+local txtbox = 1
+
+--other
 local triggers = script.Triggers
 
 local font3Width = fontrom.font3.width
@@ -17,18 +29,14 @@ local font3 = fontrom.font3.offsets
 things to fix (at a later date):
  - logo_shine not properly masking onto pokemon_ruby.png
  - fix how goofy the title screen looks
+ - make the continue option actually work
 ]]
 
+--the 'keeptrackers'
 local start = false
 local began = false
 local skip = false
-
 local inDialogue = false
-
-local maxX = 240
-local maxY = 160
-
-local txtbox = 1
 
 local function clearGraphics()
 	for i, v in ipairs(script.Parent.game.loadedassets:GetChildren()) do
@@ -50,16 +58,18 @@ local function genericColorTween(obj, newclr, clk, callback)
 	pcall(callback)
 end
 
-local function genericPosXTween(obj, newx, clk, callback)
-	local base = {} base.x = (obj.Position.X.Scale)
-	for i=1, clk do
-		wait()
-		print((newx/maxX))
-		local cx = ((newx/maxX)-base.x)/clk
-		print(cx)
-		obj.Position = obj.Position + UDim2.new(cx, 0, 0, 0)
-	end
-	pcall(callback)
+local function genericPosTween(obj, newx, newy, timeToSpend, callback)
+	local a = coroutine.create(function()
+		local new = UDim2.new(newx/maxX, 0, newy/maxY, 0)
+		local tweeninfo = TweenInfo.new(timeToSpend, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+		local g = {}
+		g.Position = new
+		local tween = twns:Create(obj, tweeninfo, g)
+		tween:Play()
+		wait(timeToSpend)
+		callback()
+	end)
+	coroutine.resume(a)
 end
 
 local function genericOpacityTween(obj, newopac, clk, callback)
@@ -172,6 +182,20 @@ local function batchRenderFromSameLinkInBounds(list, link) --each entry follows 
 	return allReturned
 end
 
+local function createElemFromBatchImgs(list, link)
+	local frame = Instance.new("Frame")
+	frame.BackgroundTransparency = 1
+	frame.Position = UDim2.new(0,0,0,0)
+	frame.AnchorPoint = Vector2.new(0,0)
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.Parent = script.Parent.game.loadedassets
+	local elems = batchRenderFromSameLinkInBounds(list, link)
+	for i, v in ipairs(elems) do
+		v.Parent = frame
+	end
+	return frame
+end
+
 local function createMenuBox(link, x, y, lengthofmiddlex, lengthofmiddley, imgColour) --x&y is origin at top left
 	local newf = Instance.new("Frame")
 	newf.Size = UDim2.new(1,0,1,0)
@@ -266,7 +290,7 @@ local function drawScrollingText(font, txt, x, y, colour, endable, callback)
 				cx+=font3[v].w -1
 			end
 			
-			wait(0.05)
+			task.wait(fontrom.scrollspeeds[textspeed])
 		end
 	end)
 	coroutine.resume(scrollTxt)
@@ -274,7 +298,7 @@ local function drawScrollingText(font, txt, x, y, colour, endable, callback)
 	return newf
 end
 
-local function dialogueBox(font, txt, endable, callback)
+local function dialogueBox(font, txt, endable, speed, callback)
 	inDialogue = true
 	local box = createMenuBox("/assets/ui/"..txtbox..".png", 16, maxY-48, 24, 4, Color3.new(1,1,1)) --l = 208px
 	local x = 24
@@ -301,8 +325,12 @@ local function dialogueBox(font, txt, endable, callback)
 				end)
 				cx+=font3[v].w -1
 			end
-
-			wait(0.05)
+			
+			if uis:IsKeyDown(inputs.scheme1.cancel) then
+				task.wait(fontrom.scrollspeeds[textspeed]/2)
+			else
+				task.wait(fontrom.scrollspeeds[textspeed])
+			end
 		end
 		pcall(function()
 			if endable == false then
@@ -400,6 +428,11 @@ local function playTheGame()
 				local flash = renderImg("/assets/titlescreen/brightwhitelight.png", 0, 0, maxX, maxY, Vector2.new(0, 0))
 				local title = renderMaskImg("/assets/titlescreen/title.png", maxX/2, 68, 175, 64, Vector2.new(0.5, .5))
 				local shine = renderMaskImg("/assets/titlescreen/logo_shine.png", -85, 0, 85, maxY, Vector2.new(0, 0))
+				local versxbase = 0
+				local vers = createElemFromBatchImgs({
+					{["x"] = versxbase, ["y"] = 0, ["sizex"] = 46, ["sizey"] = 28, ["anchor"] = Vector2.new(0,0), ["frameRectOffset"] = Vector2.new(18, 2), ["frameRectSize"] = Vector2.new(46,28), ["callback"] = "",},
+					{["x"] = versxbase+46, ["y"] = 0, ["sizex"] = 35, ["sizey"] = 28, ["anchor"] = Vector2.new(0,0), ["frameRectOffset"] = Vector2.new(0, 34), ["frameRectSize"] = Vector2.new(45,28), ["callback"] = "",}
+				}, "/assets/titlescreen/version.png")
 				shine.Parent = title
 				
 				flash.ImageTransparency = 1
@@ -423,6 +456,11 @@ local function playTheGame()
 					wait(0.05)
 					shine:TweenPosition(UDim2.new(1, 0, 0, 0))
 					genericOpacityTween(flash, 1, 20)
+					wait(0.5)
+					genericPosTween(title, maxX/2, 35, 1, function()
+						wait(1)
+						print("maintitlescreen")
+					end)
 				end)
 				
 				newsound.Ended:Wait()
@@ -482,11 +520,22 @@ local function playTheGame()
 								bg.BackgroundTransparency = 0
 								script.Parent.game.overlay.BackgroundTransparency = 1
 								wait(.1)
-								print("dasfadf")
-								local box = dialogueBox("font3_dark", "T\nh\ne\n \ni\nn\nt\ne\nr\nn\na\nl\n \nb\na\nt\nt\ne\nr\ny\n \nh\na\ns\n \nr\nu\nn\n \nd\nr\ny\n.\nnw\nT\nh\ne\n \ng\na\nm\ne\n \nc\na\nn\n \nb\ne\n \np\nl\na\ny\ne\nd\n.", false, function(txt, bx)
+								local savefile = false
+								local me = false
+								pcall(function()
+									if game.Players.LocalPlayer.save.trainer.sid.Value > 0 then
+										savefile = true
+									end
+								end)
+								pcall(function()
+									if game.Players.LocalPlayer.save.me.Value == true then
+										me = true
+									end
+								end)
+								local box = dialogueBox("font3_dark", "T\nh\ne\n \ni\nn\nt\ne\nr\nn\na\nl\n \nb\na\nt\nt\ne\nr\ny\n \nh\na\ns\n \nr\nu\nn\n \nd\nr\ny\n.\nnw\nT\nh\ne\n \ng\na\nm\ne\n \nc\na\nn\n \nb\ne\n \np\nl\na\ny\ne\nd\n.", false, false, function(txt, bx)
 									txt:Destroy()
 									bx:Destroy()
-									local newbox = dialogueBox("font3_dark", "H\no\nw\ne\nv\ne\nr\ncomma\n \nc\nl\no\nc\nk\n-\nb\na\ns\ne\nd\n \ne\nv\ne\nn\nt\ns\n \nw\ni\nl\nl\nnw\nn\no\n \nl\no\nn\ng\ne\nr\n \no\nc\nc\nu\nr\n.", true, function(txt, bx)
+									local newbox = dialogueBox("font3_dark", "H\no\nw\ne\nv\ne\nr\ncomma\n \nc\nl\no\nc\nk\n-\nb\na\ns\ne\nd\n \ne\nv\ne\nn\nt\ns\n \nw\ni\nl\nl\nnw\nn\no\n \nl\no\nn\ng\ne\nr\n \no\nc\nc\nu\nr\n.", true, false, function(txt, bx)
 										txt:Destroy()
 										bx:Destroy()
 										local folder = Instance.new("Folder")
@@ -499,6 +548,7 @@ local function playTheGame()
 											local c1 = Color3.new(0.5, 0.5, 0.5)
 											local c2 = Color3.new(0.5, 0.5, 0.5)
 											local c3 = Color3.new(0.5, 0.5, 0.5)
+											local c4 = Color3.new(0.5, 0.5, 0.5)
 											local csn = Color3.new(1, 1, 1)
 											local cnsn = Color3.new(0.5, 0.5, 0.5)
 											local mcsn = Color3.new(0.129412, 0.517647, 1)
@@ -506,6 +556,7 @@ local function playTheGame()
 											if selected == 1 then c1 = Color3.new(1, 1, 1) end
 											if selected == 2 then c2 = Color3.new(1, 1, 1) end
 											if selected == 3 then c3 = Color3.new(1, 1, 1) end
+											if selected == 4 then c4 = Color3.new(1, 1, 1) end
 											local function getclr(selectedReq, cs, cns)
 												if selected == selectedReq then
 													return cs
@@ -513,28 +564,48 @@ local function playTheGame()
 													return cns
 												end
 											end
-											local topoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 6, c1) topoption.Parent = newfolder
-											local middleoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65, 26 ,2, c2) middleoption.Parent = newfolder
-											local bottomoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 65+32, 26 ,2, c3) bottomoption.Parent = newfolder
-											local txt = drawText("font3_dark", "C\nO\nN\nT\nI\nN\nU\nE", 16, 9, getclr(1, csn, cnsn)) txt.Parent = topoption
-											local plrtitle = drawText("font3_new", "P\nL\nA\nY\nE\nR", 16, 9+16, getclr(1, mcsn, mcnsn)) plrtitle.Parent = topoption
-											local pkdxtitle = drawText("font3_new", "P\nO\nK\nefa\nD\nE\nX", 16, 9+32, getclr(1, mcsn, mcnsn)) pkdxtitle.Parent = topoption
-											local txt2 = drawText("font3_dark", "N\nE\nW\n \nG\nA\nM\nE", 16, 73, getclr(2, csn, cnsn)) txt2.Parent = middleoption
-											local txt3 = drawText("font3_dark", "O\nP\nT\nI\nO\nN\nS", 16, 65+23+8+8, getclr(3, csn, cnsn)) txt3.Parent = bottomoption
+											local motop = 0
+											if savefile then
+												motop = 65
+												local topoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 6, c1) topoption.Parent = newfolder
+												local txt = drawText("font3_dark", "C\nO\nN\nT\nI\nN\nU\nE", 16, 9, getclr(1, csn, cnsn)) txt.Parent = topoption
+												local plrtitle = drawText("font3_new", "P\nL\nA\nY\nE\nR", 16, 9+16, getclr(1, mcsn, mcnsn)) plrtitle.Parent = topoption
+												local pkdxtitle = drawText("font3_new", "P\nO\nK\nefa\nD\nE\nX", 16, 9+32, getclr(1, mcsn, mcnsn)) pkdxtitle.Parent = topoption
+												local timetitle = drawText("font3_new", "T\nI\nM\nE", maxX/2+5, 9+16, getclr(1, mcsn, mcnsn)) timetitle.Parent = topoption
+												local badgetext = drawText("font3_new", "B\nA\nD\nG\nE\nS", maxX/2+5, 9+32, getclr(1, mcsn, mcnsn)) badgetext.Parent = topoption
+											end
+											
+											local middleoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, motop, 26 ,2, c2) middleoption.Parent = newfolder
+											local txt2 = drawText("font3_dark", "N\nE\nW\n \nG\nA\nM\nE", 16, motop+8, getclr(2, csn, cnsn)) txt2.Parent = middleoption
+											
+											local bottomoption = createMenuBox("/assets/ui/"..txtbox..".png", 8, motop+32, 26 ,2, c3) bottomoption.Parent = newfolder
+											local txt3 = drawText("font3_dark", "O\nP\nT\nI\nO\nN\nS", 16, motop+23+8+8, getclr(3, csn, cnsn)) txt3.Parent = bottomoption
+											
+											if me then
+												local bottomeroption = createMenuBox("/assets/ui/"..txtbox..".png", 8, motop+32+32, 26 ,2, c4) bottomeroption.Parent = newfolder
+												local txt4 = drawText("font3_dark", "M\nY\nS\nT\nE\nR\nY\n \nE\nV\nE\nN\nT", 16, motop+23+8+8+32, getclr(4, csn, cnsn)) txt4.Parent = bottomeroption
+											end
 											folder:Destroy()
+											folder = newfolder
 										end
-										local selected = 1
+										local selected = 2
+										if savefile then selected = 1 end
 										renderNew(selected)
 										--drawScrollingText("font3_dark", "R\ne\na\nl\n \nt\ne\ns\nt\ni\nn\ng\n \nt\ne\nx\nt", 0, 0, Color3.new(1, 1, 1))
-										local connection = uis.InputBegan:Connect(function(inp)
+										local min = 2
+										local max = 3
+										if savefile then min = 1 end
+										if me then max = 4 end
+										local connection
+										connection = uis.InputBegan:Connect(function(inp)
 											if start == true and began == true then
 												if inp.KeyCode == inputs.scheme1.up then
 													selected -= 1
-													if selected == 0 then selected = 3 end
+													if selected == min-1 then selected = max end
 													renderNew(selected)
 												elseif inp.KeyCode == inputs.scheme1.down then
 													selected += 1
-													if selected == 4 then selected = 1 end
+													if selected == max+1 then selected = min end
 													renderNew(selected)
 												end
 											end
@@ -587,27 +658,34 @@ end
 cntp:PreloadAsync({pbu.."/confirmation/has_patch.png"}, function(assetID, assetwhatevermajiggy) 
 	if assetwhatevermajiggy == Enum.AssetFetchStatus.Success then
 		script.Parent.game.Error.Visible = false
-		local success, errmsg = pcall(function()
-			playTheGame()
-		end)
-		if errmsg then
-			print(errmsg)
-			while wait(math.random(.8, 1.3)) do
-				local newerrorimg = Instance.new("ImageLabel")
-				newerrorimg.Image = "rbxassetid://1847653031"
-				newerrorimg.BackgroundTransparency = 1
-				newerrorimg.Size = UDim2.new(0.05, 0, 0.05, 0)
-				newerrorimg.Position = UDim2.new(math.random(1,1000)/1000, 0, math.random(1,1000)/1000, 0)
-				local uiconstraint = Instance.new("UIAspectRatioConstraint")
-				uiconstraint.Parent = newerrorimg
-				newerrorimg.Parent = script.Parent
-				local sfx = Instance.new("Sound")
-				sfx.SoundId = "rbxassetid://9066167010"
-				sfx.PlayOnRemove = true
-				sfx.Parent = script.Parent
-				sfx:Destroy()
+		cntp:PreloadAsync({pbu.."/confirmation/"..versionPng}, function(assetID2, assetwhatevermajiggy2)
+			if assetwhatevermajiggy2 == Enum.AssetFetchStatus.Success then
+				local success, errmsg = pcall(function()
+					playTheGame()
+				end)
+				if errmsg then
+					print(errmsg)
+					while wait(math.random(.8, 1.3)) do
+						local newerrorimg = Instance.new("ImageLabel")
+						newerrorimg.Image = "rbxassetid://1847653031"
+						newerrorimg.BackgroundTransparency = 1
+						newerrorimg.Size = UDim2.new(0.05, 0, 0.05, 0)
+						newerrorimg.Position = UDim2.new(math.random(1,1000)/1000, 0, math.random(1,1000)/1000, 0)
+						local uiconstraint = Instance.new("UIAspectRatioConstraint")
+						uiconstraint.Parent = newerrorimg
+						newerrorimg.Parent = script.Parent
+						local sfx = Instance.new("Sound")
+						sfx.SoundId = "rbxassetid://9066167010"
+						sfx.PlayOnRemove = true
+						sfx.Parent = script.Parent
+						sfx:Destroy()
+					end
+				end
+			else
+				script.Parent.game.Error.Text = "Your patch is out of date! Please re-install the patch."
+				script.Parent.game.Error.Visible = true
 			end
-		end
+		end)
 	else
 		script.Parent.game.Error.Visible = true
 		print("Please join the discord.")
