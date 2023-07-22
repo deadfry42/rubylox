@@ -12,6 +12,10 @@ I am always learning throughout this project, so things will be inconsistent.
 
  - In the next section, I will talk about how the game's assets are going to be stored. I need to first say that if you get ahold of any patch that contains any '_MACOSX' folder, or any other folder relating to unix, that is because my main computers as of now are unix systems. Final releases should have this removed, but if you see any folder like this, just remove it. It's just there to help MACOSX keep folders in a certain position (i think)
 
+## Game link
+The game may be moved from my group to my profile in the future, so if you'd like to join, please go to the github wiki and go to official sites & pages.
+Please note that the game is unplayable. Literately. I've added a badge which you can only get for successfully loading the game with an unreleased patch, and even if you do, there isn't much to do other than look at my work. If you'd like to look at my work without trying to reverse engineer a patch, you can join the discord server, which is also in the wiki, where i'll upload screenshots of my work when I feel like it's ready enough.
+
 ## Assets:
 This game will require installing a patch to the Roblox internal game files. This process will differ between Windows & Mac, but there are tutorials on how to in the discord below.
 The reason you need to install a patch is because this is the way I am trying to get past copyright. All of the copyrighted assets are not hosted on Roblox and instead in the patch, which makes the assets unnaccesible for regular users. Therefore, because the assets are NOT stored anywhere within the game code, I am essentially (theoretically) voiding copyright.
@@ -22,6 +26,7 @@ The reason you need to install a patch is because this is the way I am trying to
 
 Please join the discord server if you'd like to play the game / talk about this game w/ me and some others maybe:
 https://discord.gg/RfHFJ59khG
+This link is also in the github wiki.
 
 ## Support me!
 There is currently no way to support me as this is only a passion project I started for fun, and I don't think i need any support atm.
