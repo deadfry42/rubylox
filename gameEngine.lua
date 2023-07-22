@@ -5,20 +5,18 @@ local fontrom = require(game.ReplicatedStorage.fontrom)
 local pbu = require(game.ReplicatedStorage.patchbaseurl)
 local inputs = require(game.ReplicatedStorage.inputs)
 local rendering = require(script.Parent.renderingEngine)
+local savefile = require(script.Parent.savingEngine)
 
 -- compile vars --
 local folder = game.ReplicatedStorage.compileSettings
 ---
 local maxX = folder.maxX.Value
 local maxY = folder.maxY.Value
+local defaultScrollSpeed = folder.defaultScrollSpeed.Value
 
 -- services --
 local twns = game:GetService("TweenService")
 local uis = game:GetService("UserInputService")
-
--- replace later --
-local textspeed = "slow"
-local txtbox = 1
 
 -- triggers --
 local inDialogue = script.Parent.Triggers.inDialogue
@@ -52,6 +50,7 @@ module.drawText = function(font, txt, x, y, colour)
 end
 
 module.drawScrollingText = function(font, txt, x, y, colour, endable, callback)
+	local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
 	local font3Height = fontrom.font3.height
 	local font3Width = fontrom.font3.width
 	local font3 = fontrom.font3.offsets
@@ -131,8 +130,9 @@ module.createMenuBox = function(link, x, y, lengthofmiddlex, lengthofmiddley, im
 	return newf
 end
 
-module.dialogueBox = function(font, txt, endable, speed, callback)
+module.dialogueBox = function(font, txt, endable, speed, txtbox, callback)
 	local s, e = pcall(function()
+		local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
 		inDialogue.Value = true
 		local font3Height = fontrom.font3.height
 		local font3Width = fontrom.font3.width
