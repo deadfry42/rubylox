@@ -2,6 +2,7 @@
 local pbu = require(game.ReplicatedStorage.patchbaseurl)
 local inputs = require(game.ReplicatedStorage.inputs)
 local fontrom = require(game.ReplicatedStorage.fontrom)
+local savefile = require(script.savingEngine)
 local rendering = require(script.renderingEngine)
 local engine = require(script.gameEngine)
 
@@ -17,10 +18,6 @@ local folder = game.ReplicatedStorage.compileSettings
 local versionPng = folder.versionPng.Value
 local maxX = folder.maxX.Value
 local maxY = folder.maxY.Value
-
---settings
-local textspeed = "slow"
-local txtbox = 1
 
 --other
 local triggers = script.Triggers
@@ -257,22 +254,13 @@ local function playTheGame()
 								bg.BackgroundTransparency = 0
 								script.Parent.game.overlay.BackgroundTransparency = 1
 								wait(.1)
-								local savefile = false
-								local me = false
-								pcall(function()
-									if game.Players.LocalPlayer.save.trainer.sid.Value > 0 then
-										savefile = true
-									end
-								end)
-								pcall(function()
-									if game.Players.LocalPlayer.save.me.Value == true then
-										me = true
-									end
-								end)
-								local box = engine.dialogueBox("font3_dark", "T\nh\ne\n \ni\nn\nt\ne\nr\nn\na\nl\n \nb\na\nt\nt\ne\nr\ny\n \nh\na\ns\n \nr\nu\nn\n \nd\nr\ny\n.\nnw\nT\nh\ne\n \ng\na\nm\ne\n \nc\na\nn\n \nb\ne\n \np\nl\na\ny\ne\nd\n.", false, false, function(txt, bx)
+								local save = savefile.checkForSave()
+								local me = savefile.pullFromSaveData("me", false)
+								local txtbox = savefile.pullFromSaveData("options.txtbx", 1)
+								local box = engine.dialogueBox("font3_dark", "T\nh\ne\n \ni\nn\nt\ne\nr\nn\na\nl\n \nb\na\nt\nt\ne\nr\ny\n \nh\na\ns\n \nr\nu\nn\n \nd\nr\ny\n.\nnw\nT\nh\ne\n \ng\na\nm\ne\n \nc\na\nn\n \nb\ne\n \np\nl\na\ny\ne\nd\n.", false, false, txtbox, function(txt, bx)
 									txt:Destroy()
 									bx:Destroy()
-									local newbox = engine.dialogueBox("font3_dark", "H\no\nw\ne\nv\ne\nr\ncomma\n \nc\nl\no\nc\nk\n-\nb\na\ns\ne\nd\n \ne\nv\ne\nn\nt\ns\n \nw\ni\nl\nl\nnw\nn\no\n \nl\no\nn\ng\ne\nr\n \no\nc\nc\nu\nr\n.", true, false, function(txt, bx)
+									local newbox = engine.dialogueBox("font3_dark", "H\no\nw\ne\nv\ne\nr\ncomma\n \nc\nl\no\nc\nk\n-\nb\na\ns\ne\nd\n \ne\nv\ne\nn\nt\ns\n \nw\ni\nl\nl\nnw\nn\no\n \nl\no\nn\ng\ne\nr\n \no\nc\nc\nu\nr\n.", true, false, txtbox, function(txt, bx)
 										txt:Destroy()
 										bx:Destroy()
 										local folder = Instance.new("Folder")
@@ -302,7 +290,7 @@ local function playTheGame()
 												end
 											end
 											local motop = 0
-											if savefile then
+											if save then
 												motop = 65
 												local topoption = engine.createMenuBox("/assets/ui/"..txtbox..".png", 8, 1, 26, 6, c1) topoption.Parent = newfolder
 												local txt = engine.drawText("font3_dark", "C\nO\nN\nT\nI\nN\nU\nE", 16, 9, getclr(1, csn, cnsn)) txt.Parent = topoption
@@ -326,12 +314,12 @@ local function playTheGame()
 											folder = newfolder
 										end
 										local selected = 2
-										if savefile then selected = 1 end
+										if save then selected = 1 end
 										renderNew(selected)
 										--drawScrollingText("font3_dark", "R\ne\na\nl\n \nt\ne\ns\nt\ni\nn\ng\n \nt\ne\nx\nt", 0, 0, Color3.new(1, 1, 1))
 										local min = 2
 										local max = 3
-										if savefile then min = 1 end
+										if save then min = 1 end
 										if me then max = 4 end
 										local connection
 										connection = uis.InputBegan:Connect(function(inp)
