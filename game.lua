@@ -2,7 +2,8 @@
 local pbu = require(game.ReplicatedStorage.patchbaseurl)
 local inputs = require(game.ReplicatedStorage.inputs)
 local fontrom = require(game.ReplicatedStorage.fontrom)
-local engine = require(script.engine)
+local rendering = require(script.renderingEngine)
+local engine = require(script.gameEngine)
 
 --services
 local twns = game:GetService("TweenService")
@@ -46,7 +47,7 @@ local inDialogue = script.Triggers.inDialogue
 local function playTheGame()
 	game.ReplicatedStorage["remote events (RARE!!!!)"]["gib welcome badge"]:FireServer()
 	while began == false do
-		engine.clearGraphics()
+		rendering.clearGraphics()
 		start = false
 		skip = false
 		print("cycle")
@@ -72,7 +73,7 @@ local function playTheGame()
 		local function titleScreen(newsound)
 			if start == false and skip == false then
 				start = true
-				engine.clearGraphics()
+				rendering.clearGraphics()
 				newsound.SoundId = pbu.."/music/3.mp3"
 				newsound:Play()
 				
@@ -80,11 +81,11 @@ local function playTheGame()
 				script.Parent.game.overlay.BackgroundTransparency = 0
 				
 				--finaly should be ~35?
-				local flash = engine.renderImg("/assets/titlescreen/brightwhitelight.png", 0, 0, maxX, maxY, Vector2.new(0, 0))
-				local title = engine.renderMaskImg("/assets/titlescreen/title.png", maxX/2, 68, 175, 64, Vector2.new(0.5, .5))
-				local shine = engine.renderMaskImg("/assets/titlescreen/logo_shine.png", -85, 0, 85, maxY, Vector2.new(0, 0))
+				local flash = rendering.renderImg("/assets/titlescreen/brightwhitelight.png", 0, 0, maxX, maxY, Vector2.new(0, 0))
+				local title = rendering.renderMaskImg("/assets/titlescreen/title.png", maxX/2, 68, 175, 64, Vector2.new(0.5, .5))
+				local shine = rendering.renderMaskImg("/assets/titlescreen/logo_shine.png", -85, 0, 85, maxY, Vector2.new(0, 0))
 				local versxbase = (maxX/2)-(64/2)
-				local vers = engine.createElemFromBatchImgs({
+				local vers = rendering.createElemFromBatchImgs({
 					{["x"] = versxbase, ["y"] = 10, ["sizex"] = 46, ["sizey"] = 28, ["anchor"] = Vector2.new(0,0), ["frameRectOffset"] = Vector2.new(18, 2), ["frameRectSize"] = Vector2.new(46,28), ["callback"] = (function(ni) ni.ImageTransparency = 1 end),},
 					{["x"] = versxbase+46, ["y"] = 10, ["sizex"] = 35, ["sizey"] = 28, ["anchor"] = Vector2.new(0,0), ["frameRectOffset"] = Vector2.new(0, 34), ["frameRectSize"] = Vector2.new(45,28), ["callback"] = (function(ni) ni.ImageTransparency = 1 end),}
 				}, "/assets/titlescreen/version.png")
@@ -94,29 +95,29 @@ local function playTheGame()
 				
 				shine.maskedwithinframe.ImageTransparency = 0.5
 				
-				engine.genericOpacityTween(script.Parent.game.overlay, 1, 10, function()
+				rendering.genericOpacityTween(script.Parent.game.overlay, 1, 10, function()
 					shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
 					shine:TweenPosition(UDim2.new(1, 0, 0, 0))
 					wait(1.45)
 					flash.ImageTransparency = 1
-					engine.genericOpacityTween(flash, 0, 10, function()
+					rendering.genericOpacityTween(flash, 0, 10, function()
 						wait()
 						shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
 						shine:TweenPosition(UDim2.new(1, 0, 0, 0))
 						wait(0.05)
-						engine.genericOpacityTween(flash, 1, 20, function()
+						rendering.genericOpacityTween(flash, 1, 20, function()
 							wait(0.6)
-							engine.genericOpacityTween(flash, 0, 10, function()
+							rendering.genericOpacityTween(flash, 0, 10, function()
 								shine.Position = UDim2.new(0-shine.Size.X.Scale,0,0,0)
 								wait(0.05)
 								shine:TweenPosition(UDim2.new(1, 0, 0, 0))
-								engine.genericOpacityTween(flash, 1, 20, function()
+								rendering.genericOpacityTween(flash, 1, 20, function()
 									wait(0.5)
 									for i, v in ipairs(vers:GetChildren()) do
-										engine.genericOpacityTween(v, 0, 30)
-										engine.genericPosTween(v, v.Position.X.Scale*maxX, 55, 1)
+										rendering.genericOpacityTween(v, 0, 30)
+										rendering.genericPosTween(v, v.Position.X.Scale*maxX, 55, 1)
 									end
-									engine.genericPosTween(title, maxX/2, 35, 1, function()
+									rendering.genericPosTween(title, maxX/2, 35, 1, function()
 										wait(1)
 										print("maintitlescreen")
 										shine:Destroy()
@@ -140,7 +141,7 @@ local function playTheGame()
 												table.insert(blox, newf)
 												local y = 0
 												for i=1, 32 do
-													local buble = engine.renderImgInBounds("/assets/titlescreen/debugmonster.png", -1+x, 0+y+masterY, 32, 1, Vector2.new(0, 0), Vector2.new(7, 0+y), Vector2.new(32, 1), function(ni)
+													local buble = rendering.renderImgInBounds("/assets/titlescreen/debugmonster.png", -1+x, 0+y+masterY, 32, 1, Vector2.new(0, 0), Vector2.new(7, 0+y), Vector2.new(32, 1), function(ni)
 														ni.Name = i
 														ni.Parent = newf
 														ni.ImageTransparency = 0.5
@@ -188,8 +189,8 @@ local function playTheGame()
 										]]
 										local x = 0
 										for i=1, 10 do
-											local ground = engine.renderImgInBounds("/assets/titlescreen/debugmonster.png", x, maxY-24, 24, 16, Vector2.new(0,0), Vector2.new(88, 32), Vector2.new(24, 16))
-											local groundground = engine.renderImgInBounds("/assets/titlescreen/debugmonster.png", x, maxY-8, 24, 8, Vector2.new(0,0), Vector2.new(88, 40), Vector2.new(24, 8))
+											local ground = rendering.renderImgInBounds("/assets/titlescreen/debugmonster.png", x, maxY-24, 24, 16, Vector2.new(0,0), Vector2.new(88, 32), Vector2.new(24, 16))
+											local groundground = rendering.renderImgInBounds("/assets/titlescreen/debugmonster.png", x, maxY-8, 24, 8, Vector2.new(0,0), Vector2.new(88, 40), Vector2.new(24, 8))
 											x+=24
 										end
 									end)
@@ -211,7 +212,7 @@ local function playTheGame()
 		local base = 40
 		local space = 15
 		
-		local lines = engine.batchRenderFromSameLinkInBounds({
+		local lines = rendering.batchRenderFromSameLinkInBounds({
 			--[[ 2003 txt ]]{["x"] = 80-test, ["y"] = base+(space), ["sizex"] = 28, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(30,8), ["callback"] = "",},
 			--[[ cpr symbol 1 ]]{["x"] = 70-test, ["y"] = base+(space*2), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8), ["callback"] = "",},
 			--[[ cpr symbol 2 ]]{["x"] = 70-test, ["y"] = base+(space*3), ["sizex"] = 9, ["sizey"] = 8, ["anchor"] = Vector2.new(0.5,0.5), ["frameRectOffset"] = Vector2.new(15, 0), ["frameRectSize"] = Vector2.new(9,8), ["callback"] = "",},
@@ -224,12 +225,12 @@ local function playTheGame()
 			--[[ creatures txt ]]{["x"] = 120, ["y"] = base+(space*3), ["sizex"] = 61, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(1, 9), ["frameRectSize"] = Vector2.new(61,7), ["callback"] = "",},
 			--[[ gamefreak txt ]]{["x"] = 120, ["y"] = base+(space*4), ["sizex"] = 71, ["sizey"] = 8, ["anchor"] = Vector2.new(0,0.5), ["frameRectOffset"] = Vector2.new(65, 9), ["frameRectSize"] = Vector2.new(71,7), ["callback"] = "",},
 		}, "/assets/titlescreen/copyright.png")
-		engine.genericOpacityTween(script.Parent.game.overlay, 1, 10)
+		rendering.genericOpacityTween(script.Parent.game.overlay, 1, 10)
 		
 		wait(2.5)
-		engine.batchGenericOpacityTween(lines, 0, 1, 10)
+		rendering.batchGenericOpacityTween(lines, 0, 1, 10)
 		wait(.5)
-		engine.clearGraphics()
+		rendering.clearGraphics()
 		
 		local newsound = boot()
 
@@ -243,14 +244,14 @@ local function playTheGame()
 						twns:Create(newsound, twni, gA):Play()
 						script.Parent.game.overlay.BackgroundTransparency = 1
 						script.Parent.game.overlay.BackgroundColor3 = Color3.new(1,1,1)
-						engine.genericOpacityTween(script.Parent.game.overlay, 0, 10, function()
-							engine.clearGraphics()
-							engine.genericColorTween(script.Parent.game.overlay, Color3.new(0.501961, 0.596078, 0.784314), 10, function()
+						rendering.genericOpacityTween(script.Parent.game.overlay, 0, 10, function()
+							rendering.clearGraphics()
+							rendering.genericColorTween(script.Parent.game.overlay, Color3.new(0.501961, 0.596078, 0.784314), 10, function()
 								wait(.1)
-								engine.genericColorTween(script.Parent.game.overlay, Color3.new(0.309804, 0.32549, 0.560784), 2)
+								rendering.genericColorTween(script.Parent.game.overlay, Color3.new(0.309804, 0.32549, 0.560784), 2)
 								--main titlescreen
 								began = true
-								local bg = engine.renderImg(pbu.."/assets/titlescreen/brightwhitelight.png", 0 ,0, maxX, maxY, Vector2.new(0 ,0))
+								local bg = rendering.renderImg(pbu.."/assets/titlescreen/brightwhitelight.png", 0 ,0, maxX, maxY, Vector2.new(0 ,0))
 								bg.BackgroundColor3 = Color3.new(0.309804, 0.32549, 0.560784)
 								bg.ImageTransparency = 1
 								bg.BackgroundTransparency = 0
@@ -354,17 +355,17 @@ local function playTheGame()
 					end
 				else
 					if began == true and start == true and inDialogue.Value == false and inp.KeyCode == inputs.scheme1.cancel then
-						engine.playSFX("sel.wav")
+						rendering.playSFX("sel.wav")
 						newsound:Stop()
 						newsound.Volume = 1
 						script.Parent.game.overlay.BackgroundTransparency = 0
 						script.Parent.game.overlay.BackgroundColor3 = Color3.new(0.309804, 0.32549, 0.560784)
-						engine.genericColorTween(script.Parent.game.overlay, Color3.new(1, 1, 1), 5)
+						rendering.genericColorTween(script.Parent.game.overlay, Color3.new(1, 1, 1), 5)
 						start = false
 						skip = false
 						began = false
 						wait(0.2)
-						engine.clearGraphics()
+						rendering.clearGraphics()
 						titleScreen(newsound)
 					elseif start == false and began == false then
 						titleScreen(newsound)
@@ -378,7 +379,7 @@ local function playTheGame()
 		triggers.RestartMainTitleLoop.Changed:Connect(function(newval)
 			skip = true
 			newsound.TimePosition = 100000
-			engine.clearGraphics()
+			rendering.clearGraphics()
 		end)
 		
 		newsound.Ended:Wait()
