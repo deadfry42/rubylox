@@ -1,6 +1,6 @@
 # rubylox
 Recreating Pokemon Ruby to the Roblox game engine (engine only, no ROM)
-***EXTREMELY INCOMPLETE*** (~(430+193+214) lines as of writing)
+***EXTREMELY INCOMPLETE*** (>1000 lines as of writing)
 
 ## Notes & Warnings:
  - **DO NOT** use *MY* code as an example. I am still learning, and I know that my code is almost never optimised.
