@@ -174,52 +174,6 @@ module.createElemFromBatchImgs = function(list, link)
 	return frame
 end
 
-module.createMenuBox = function(link, x, y, lengthofmiddlex, lengthofmiddley, imgColour) --x&y is origin at top left
-	local newf = Instance.new("Frame")
-	newf.Size = UDim2.new(1,0,1,0)
-	newf.Position = UDim2.new(0,0,0,0)
-	newf.AnchorPoint = Vector2.new(0,0)
-	newf.BackgroundTransparency = 1
-	newf.Parent =  script.Parent.Parent.game.loadedassets
-	local dictionary = {
-		["topleft"] = Vector2.new(0, 0), ["topmiddle"] = Vector2.new(8, 0), ["topright"] = Vector2.new(16, 0), ["middleleft"] = Vector2.new(0, 8), ["middlemiddle"] = Vector2.new(8, 8), ["middleright"] = Vector2.new(16, 8), ["bottomleft"] = Vector2.new(0, 16), ["bottommiddle"] = Vector2.new(8, 16), ["bottomright"] = Vector2.new(16, 16), }
-	local size = 8
-	local function addToRender(listToRender, cx, cy, offset)
-		table.insert(listToRender, {
-			["x"] = cx, ["y"] = cy, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = offset, ["frameRectSize"] = Vector2.new(size, size), ["callback"] = function(ni) ni.ImageColor3 = imgColour ni.Parent = newf end,
-		})
-	end
-	local function addToRenderInvis(listToRender, cx, cy, offset)
-		table.insert(listToRender, {
-			["x"] = cx, ["y"] = cy, ["sizex"] = size, ["sizey"] = size, ["anchor"] = Vector2.new(0, 0), ["frameRectOffset"] = offset, ["frameRectSize"] = Vector2.new(size, size), ["callback"] = function(ni) ni.ImageColor3 = imgColour ni.Parent = newf ni.ImageTransparency = 1 end,
-		})
-	end
-	local listToRender = {}
-	local cx = x+size
-	local cy = y
-	addToRender(listToRender, x, y, dictionary.topleft)
-	for ii=1, lengthofmiddlex do addToRender(listToRender, cx, cy, dictionary.topmiddle) cx += size end
-	addToRender(listToRender, cx, cy, dictionary.topright) cy += size
-	for i=1, lengthofmiddley do
-		cx = x
-		addToRender(listToRender, cx, cy, dictionary.middleleft)
-		for ii=0, lengthofmiddlex do
-			cx += size
-			if ii == lengthofmiddlex then
-				addToRenderInvis(listToRender, cx, cy, dictionary.middlemiddle)
-			else
-				addToRender(listToRender, cx, cy, dictionary.middlemiddle)
-			end
-		end
-		addToRender(listToRender, cx, cy, dictionary.middleright) cy+=size
-	end
-	cx = x addToRender(listToRender, cx, cy, dictionary.bottomleft) cx += size
-	for ii=1, lengthofmiddlex do addToRender(listToRender, cx, cy, dictionary.bottommiddle) cx += size end
-	addToRender(listToRender, cx, cy, dictionary.bottomright)
-	module.batchRenderFromSameLinkInBounds(listToRender, link)
-	return newf
-end
-
 module.drawHighlightBox = function(x, y, lengthofmiddlex, lengthofmiddley) --text boxes
 	local sizex = (2+lengthofmiddlex)*8
 	local sizey = (2+lengthofmiddley)*8
