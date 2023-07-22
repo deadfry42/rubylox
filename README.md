@@ -30,4 +30,4 @@ There will not be any monetization for the game. This is because the game is lit
 
 
 # request
-pls add linux support to roblox - it would make my life 1000 times easier (i'm doing this on mac)
+pls add linux support to roblox - it would make my life 1000 times easier (i'm doing this on macbook and my workflow would definetly skyrocket if I could work on my pc (not that I hate macos, its just more convenient to be able to do it on a bigger screen at home))
