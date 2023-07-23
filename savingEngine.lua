@@ -1,24 +1,17 @@
 local module = {}
 
 module.checkForSave = function()
+	local returning = false
 	local s, e = pcall(function()
 		if game.Players.LocalPlayer:FindFirstChild("save") then
 			if #game.Players.LocalPlayer:FindFirstChild("save"):GetChildren() > 0 then
 				if #game.Players.LocalPlayer.save.trainer:GetChildren() > 0 then
-					return true
-				else
-					return false
+					returning = true
 				end
-			else
-				return false
 			end
-		else
-			return false
 		end
 	end)
-	if e then
-		return false
-	end
+	return returning
 end
 
 module.pullFromSaveData = function(path, resort) --"options.txtspd", "slow"
