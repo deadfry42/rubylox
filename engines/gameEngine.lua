@@ -19,9 +19,6 @@ local defaultScrollSpeed = folder.defaultScrollSpeed.Value
 local twns = game:GetService("TweenService")
 local uis = game:GetService("UserInputService")
 
--- triggers --
-local inDialogue = script.Parent.Triggers.inDialogue
-
 module.drawText = function(font, txt, x, y, colour)
 	local font3Height = fontrom.font3.height
 	local font3Width = fontrom.font3.width
@@ -46,7 +43,7 @@ module.drawText = function(font, txt, x, y, colour)
 			cx+=font3[v].w -1
 		end
 	end
-	newf.Parent = script.Parent.Parent.game.loadedassets
+	newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
 	return newf
 end
 
@@ -81,7 +78,7 @@ module.drawScrollingText = function(font, txt, x, y, colour, endable, callback)
 		end
 	end)
 	coroutine.resume(scrollTxt)
-	newf.Parent = script.Parent.Parent.game.loadedassets
+	newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
 	return newf
 end
 
@@ -91,7 +88,7 @@ module.createMenuBox = function(link, x, y, lengthofmiddlex, lengthofmiddley, im
 	newf.Position = UDim2.new(0,0,0,0)
 	newf.AnchorPoint = Vector2.new(0,0)
 	newf.BackgroundTransparency = 1
-	newf.Parent =  script.Parent.Parent.game.loadedassets
+	newf.Parent =  script.Parent.Parent.Parent.gry.loadedassets
 	local dictionary = {
 		["topleft"] = Vector2.new(0, 0), ["topmiddle"] = Vector2.new(8, 0), ["topright"] = Vector2.new(16, 0), ["middleleft"] = Vector2.new(0, 8), ["middlemiddle"] = Vector2.new(8, 8), ["middleright"] = Vector2.new(16, 8), ["bottomleft"] = Vector2.new(0, 16), ["bottommiddle"] = Vector2.new(8, 16), ["bottomright"] = Vector2.new(16, 16), }
 	local size = 8
@@ -164,7 +161,7 @@ module.dialogueBox = function(font, txt, endable, speed, txtbox, callback)
 					end)
 					cx+=font3[v].w -1
 				end
-
+				
 				if inputs.isKeyDown(ctrls.scheme1.cancel) then
 					task.wait(fontrom.scrollspeeds["megascroll"])
 				else
@@ -201,7 +198,7 @@ module.dialogueBox = function(font, txt, endable, speed, txtbox, callback)
 			end)
 		end)
 		coroutine.resume(scrollTxt)
-		newf.Parent = script.Parent.Parent.game.loadedassets
+		newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
 	end)
 	if e then error(e) end
 end
