@@ -15,7 +15,7 @@ local twns = game:GetService("TweenService")
 local uis = game:GetService("UserInputService")
 
 module.clearGraphics = function()
-	for i, v in ipairs(script.Parent.Parent.game.loadedassets:GetChildren()) do
+	for i, v in ipairs(script.Parent.Parent.Parent.gry.loadedassets:GetChildren()) do
 		v:Destroy()
 	end
 end
@@ -96,7 +96,7 @@ end
 module.renderImg = function(filepathinpatch, x, y, sizex, sizey, anchor, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 160, same for sizes
 	local newimg = Instance.new("ImageLabel")
 	newimg.Image = pbu..filepathinpatch
-	newimg.Parent = script.Parent.Parent.game.loadedassets
+	newimg.Parent = script.Parent.Parent.Parent.gry.loadedassets
 	newimg.AnchorPoint = anchor
 	newimg.BorderSizePixel = 0
 	newimg.BackgroundTransparency = 1
@@ -117,7 +117,7 @@ module.renderMaskImg = function(filepathinpatch, x, y, sizex, sizey, anchor, cal
 	newf.Size = UDim2.new((sizex/maxX), 0, (sizey/maxY), 0)
 	newf.AnchorPoint = anchor
 	newf.ClipsDescendants = true
-	newf.Parent = script.Parent.Parent.game.loadedassets
+	newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
 	local newimg = Instance.new("ImageLabel")
 	newimg.Name = "maskedwithinframe"
 	newimg.Image = pbu..filepathinpatch
@@ -137,7 +137,7 @@ end
 module.renderImgInBounds = function(filepathinpatch, x, y, sizex, sizey, anchor, frameRectOffset, frameRectSize, callback) --returns img, x in bounds of game and out of 240. y in bounds of game and out of 160, same for sizes
 	local newimg = Instance.new("ImageLabel")
 	newimg.Image = pbu..filepathinpatch
-	newimg.Parent = script.Parent.Parent.game.loadedassets
+	newimg.Parent = script.Parent.Parent.Parent.gry.loadedassets
 	newimg.AnchorPoint = anchor
 	newimg.BorderSizePixel = 0
 	newimg.BackgroundTransparency = 1
@@ -166,7 +166,7 @@ module.createElemFromBatchImgs = function(list, link)
 	frame.Position = UDim2.new(0,0,0,0)
 	frame.AnchorPoint = Vector2.new(0,0)
 	frame.Size = UDim2.new(1, 0, 1, 0)
-	frame.Parent = script.Parent.Parent.game.loadedassets
+	frame.Parent = script.Parent.Parent.Parent.gry.loadedassets
 	local elems = module.batchRenderFromSameLinkInBounds(list, link)
 	for i, v in ipairs(elems) do
 		v.Parent = frame
