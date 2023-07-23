@@ -3,9 +3,10 @@ local module = {}
 -- includes --
 local fontrom = require(game.ReplicatedStorage.fontrom)
 local pbu = require(game.ReplicatedStorage.patchbaseurl)
-local inputs = require(game.ReplicatedStorage.inputs)
+local ctrls = require(game.ReplicatedStorage.inputs)
 local rendering = require(script.Parent.renderingEngine)
 local savefile = require(script.Parent.savingEngine)
+local inputs = require(script.Parent.inputEngine)
 
 -- compile vars --
 local folder = game.ReplicatedStorage.compileSettings
@@ -133,7 +134,8 @@ end
 module.dialogueBox = function(font, txt, endable, speed, txtbox, callback)
 	local s, e = pcall(function()
 		local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
-		inDialogue.Value = true
+		--inDialogue.Value = true
+		inputs.wipeAllFuncs()
 		local font3Height = fontrom.font3.height
 		local font3Width = fontrom.font3.width
 		local font3 = fontrom.font3.offsets
@@ -163,7 +165,7 @@ module.dialogueBox = function(font, txt, endable, speed, txtbox, callback)
 					cx+=font3[v].w -1
 				end
 
-				if uis:IsKeyDown(inputs.scheme1.cancel) then
+				if inputs.isKeyDown(ctrls.scheme1.cancel) then
 					task.wait(fontrom.scrollspeeds["megascroll"])
 				else
 					task.wait(fontrom.scrollspeeds[textspeed])
@@ -184,23 +186,17 @@ module.dialogueBox = function(font, txt, endable, speed, txtbox, callback)
 						end)
 						coroutine.resume(anim)
 					end)
-					local connect
-					connect = uis.InputBegan:Connect(function(inp)
-						if inp.KeyCode == inputs.scheme1.interact or inp.KeyCode == inputs.scheme1.cancel then
-							rendering.playSFX("sel.wav")
-							connect:Disconnect()
-							callback(newf, box)
-						end
-					end)
+					local function advance()
+						rendering.playSFX("sel.wav")
+						callback(newf, box)
+					end
+					inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", advance, true)
+					inputs.assignKeyToFunc(ctrls.scheme1.cancel, "advancetxt", advance, true)
 				else
-					local connect
-					connect = uis.InputBegan:Connect(function(inp)
-						if inp.KeyCode == inputs.scheme1.interact then
-							connect:Disconnect()
-							inDialogue.Value = false
-							callback(newf, box)
-						end
-					end)
+					local function finish()
+						callback(newf, box)
+					end
+					inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", finish, true)
 				end
 			end)
 		end)
