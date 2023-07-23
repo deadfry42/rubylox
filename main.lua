@@ -1,10 +1,11 @@
 --includes
 local pbu = require(game.ReplicatedStorage.patchbaseurl)
-local inputs = require(game.ReplicatedStorage.inputs)
+local ctrls = require(game.ReplicatedStorage.inputs)
 local fontrom = require(game.ReplicatedStorage.fontrom)
 local savefile = require(script.savingEngine)
 local rendering = require(script.renderingEngine)
 local engine = require(script.gameEngine)
+local inputs = require(script.inputEngine)
 
 --services
 local twns = game:GetService("TweenService")
@@ -234,7 +235,7 @@ local function playTheGame()
 		uis.InputBegan:Connect(function(inp)
 			if inp.UserInputType == Enum.UserInputType.Keyboard then
 				if start == true and began == false then
-					if inp.KeyCode == inputs.scheme1.interact or inp.KeyCode == inputs.scheme1.cancel or inp.KeyCode == inputs.scheme1.menu then
+					if inp.KeyCode == ctrls.scheme1.interact or inp.KeyCode == ctrls.scheme1.cancel or inp.KeyCode == ctrls.scheme1.menu then
 						local twni = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 						local gA = {} gA.Volume = 0
 						
@@ -313,6 +314,20 @@ local function playTheGame()
 											folder:Destroy()
 											folder = newfolder
 										end
+										local selFuncTable = {
+											["1"] = function()-- continue --
+												
+											end,
+											["2"] = function() -- newgame --
+											
+											end,
+											["3"] = function() -- options --
+											
+											end,
+											["4"] = function() -- mystery event --
+											
+											end,
+										}
 										local selected = 2
 										if save then selected = 1 end
 										renderNew(selected)
@@ -324,43 +339,46 @@ local function playTheGame()
 										local connection
 										connection = uis.InputBegan:Connect(function(inp)
 											if start == true and began == true then
-												if inp.KeyCode == inputs.scheme1.up then
+												if inp.KeyCode == ctrls.scheme1.up then
 													selected -= 1
 													if selected == min-1 then selected = max end
 													renderNew(selected)
-												elseif inp.KeyCode == inputs.scheme1.down then
+												elseif inp.KeyCode == ctrls.scheme1.down then
 													selected += 1
 													if selected == max+1 then selected = min end
 													renderNew(selected)
+												elseif inp.KeyCode == ctrls.scheme1.interact then
+													print(selected.." PRESSED. DO SOMETHING LMAO!!!!")
+													rendering.playSFX("sel.wav")
+													selFuncTable[selected..""]()
+												elseif inp.KeyCode == ctrls.scheme1.cancel and inDialogue.Value == false then
+													rendering.playSFX("sel.wav")
+													newsound:Stop()
+													newsound.Volume = 1
+													script.Parent.game.overlay.BackgroundTransparency = 0
+													script.Parent.game.overlay.BackgroundColor3 = Color3.new(0.309804, 0.32549, 0.560784)
+													rendering.genericColorTween(script.Parent.game.overlay, Color3.new(1, 1, 1), 5)
+													start = false
+													skip = false
+													began = false
+													wait(0.2)
+													rendering.clearGraphics()
+													titleScreen(newsound)
+													print(connection)
+													connection:Disconnect()
+													connection = nil
+													print(connection)
 												end
 											end
-
 										end)
 									end)
 								end)
 							end)
 						end)
 					end
-				else
-					if began == true and start == true and inDialogue.Value == false and inp.KeyCode == inputs.scheme1.cancel then
-						rendering.playSFX("sel.wav")
-						newsound:Stop()
-						newsound.Volume = 1
-						script.Parent.game.overlay.BackgroundTransparency = 0
-						script.Parent.game.overlay.BackgroundColor3 = Color3.new(0.309804, 0.32549, 0.560784)
-						rendering.genericColorTween(script.Parent.game.overlay, Color3.new(1, 1, 1), 5)
-						start = false
-						skip = false
-						began = false
-						wait(0.2)
-						rendering.clearGraphics()
-						titleScreen(newsound)
-					elseif start == false and began == false then
-						titleScreen(newsound)
-					end
-					
+				elseif start == false and began == false then
+					titleScreen(newsound)
 				end
-				
 			end
 		end)
 		
