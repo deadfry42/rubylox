@@ -128,7 +128,7 @@ module.createMenuBox = function(link, x, y, lengthofmiddlex, lengthofmiddley, im
 	return newf
 end
 
-module.dialogueBox = function(font, txt, endable, speed, txtbox, callback)
+module.dialogueBox = function(font, txt, endable, y, txtbox, callback)
 	local s, e = pcall(function()
 		local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
 		--inDialogue.Value = true
@@ -136,9 +136,8 @@ module.dialogueBox = function(font, txt, endable, speed, txtbox, callback)
 		local font3Height = fontrom.font3.height
 		local font3Width = fontrom.font3.width
 		local font3 = fontrom.font3.offsets
-		local box = module.createMenuBox("/assets/ui/"..txtbox..".png", 16, maxY-48, 24, 4, Color3.new(1,1,1)) --l = 208px
+		local box = module.createMenuBox("/assets/ui/"..txtbox..".png", 16, y-8, 24, 4, Color3.new(1,1,1)) --l = 208px
 		local x = 24
-		local y = maxY-40
 		local clr = Color3.new(1,1,1)
 		local newf = Instance.new("Frame")
 		newf.Size = UDim2.new(1,0,1,0)
@@ -154,6 +153,10 @@ module.dialogueBox = function(font, txt, endable, speed, txtbox, callback)
 				if v == "nw" then
 					cy += font3Height+1
 					cx = x
+				elseif v:sub(1,4) == "func" then
+					local str = v:sub(6, #v-1)
+					local func = require(game.ReplicatedStorage.functionReferences[str])
+					func(script)
 				else
 					rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
 						ni.Parent = newf
@@ -162,7 +165,7 @@ module.dialogueBox = function(font, txt, endable, speed, txtbox, callback)
 					cx+=font3[v].w -1
 				end
 				
-				if inputs.isKeyDown(ctrls.scheme1.cancel) then
+				if inputs.isKeyDown(ctrls.scheme1.cancel) or inputs.isKeyDown(ctrls.scheme1.interact) then
 					task.wait(fontrom.scrollspeeds["megascroll"])
 				else
 					task.wait(fontrom.scrollspeeds[textspeed])
