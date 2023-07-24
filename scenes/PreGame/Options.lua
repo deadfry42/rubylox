@@ -7,6 +7,7 @@ local rendering = require(script.Parent.Parent.Parent.Engines.renderingEngine)
 local engine = require(script.Parent.Parent.Parent.Engines.gameEngine)
 local savefile = require(script.Parent.Parent.Parent.Engines.savingEngine)
 local ctrls = require(game.ReplicatedStorage.inputs)
+local dialogue = require(game.ReplicatedStorage.talkscript)
 local folder = game.ReplicatedStorage.compileSettings
 local maxX = folder.maxX.Value
 local maxY = folder.maxY.Value
@@ -17,7 +18,7 @@ options.run = function()
 	bg.BackgroundColor3 = Color3.new(0.309804, 0.32549, 0.560784)
 	bg.ImageTransparency = 1
 	bg.BackgroundTransparency = 0
-	engine.drawText("font3_dark", "W\nI\nP\n \ns\no\ns\n.", 10, 10, Color3.new(1,1,1))
+	engine.drawText("font3_dark", dialogue.options.a, 10, 10, Color3.new(1,1,1))
 	wait(0.25)
 	rendering.genericOpacityTween(script.Parent.Parent.Parent.Parent.gry.overlay, 1, 10, function()
 		inputs.assignKeyToFunc(ctrls.scheme1.cancel, "exitoptions", function()
