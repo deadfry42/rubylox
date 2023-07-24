@@ -88,6 +88,16 @@ end
 module.playSFX = function(sfxnameinfolder, vol)
 	local newsfx = Instance.new("Sound")
 	newsfx.SoundId = pbu.."/soundeffects/"..sfxnameinfolder
+	newsfx.Volume = 1
+	newsfx.Parent = script.Parent
+	newsfx.PlayOnRemove = true
+	newsfx:Destroy()
+end
+
+module.playCry = function(sfxnameinfolder, vol)
+	local newsfx = Instance.new("Sound")
+	newsfx.SoundId = pbu.."/cries/"..sfxnameinfolder
+	newsfx.Volume = .5
 	newsfx.Parent = script.Parent
 	newsfx.PlayOnRemove = true
 	newsfx:Destroy()
