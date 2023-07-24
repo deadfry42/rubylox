@@ -17,8 +17,8 @@ local defaultScrollSpeed = folder.defaultScrollSpeed.Value
 
 -- services --
 local twns = game:GetService("TweenService")
-local uis = game:GetService("UserInputService")
 
+--[[
 module.drawText = function(font, txt, x, y, colour)
 	local font3Height = fontrom.font3.height
 	local font3Width = fontrom.font3.width
@@ -41,6 +41,66 @@ module.drawText = function(font, txt, x, y, colour)
 				ni.ImageColor3 = colour
 			end)
 			cx+=font3[v].w -1
+		end
+	end
+	newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
+	return newf
+end
+]]
+
+module.drawText = function(font, txt, x, y, colour)
+	local font3Height = fontrom.font3.height
+	local font3Width = fontrom.font3.width
+	local font3 = fontrom.font3.offsets
+	local newf = Instance.new("Frame")
+	newf.Size = UDim2.new(1,0,1,0)
+	newf.Position = UDim2.new(0,0,0,0)
+	newf.AnchorPoint = Vector2.new(0,0)
+	newf.BackgroundTransparency = 1
+	newf.Name = txt
+	local cx = x
+	local cy = y
+	local sections = txt:split("|")
+	--returns {(So it), (apos), (s ), (plrname), (?)}
+	for i, v in ipairs(sections) do
+		local towrite = {}
+		if v:sub(1,1) == "`" then
+			local code = v:sub(2, -1)
+			--letters
+			if code == "nw" then
+				cy += font3Height+1
+				cx = x
+			else
+				table.insert(towrite, code)
+			end
+		elseif v:sub(1,1) == "``" then
+			local code = v:sub(3, -1)
+			--functions
+			if code == "plrname" then
+				local name = savefile.pullFromSaveData("trainer.name", "")
+				for letter in name:gmatch(".") do
+					table.insert(towrite,letter)
+				end
+			elseif code:match("func", 1) then
+				--function, run now
+				local detect = code:split("(")
+				local scriptname = detect[2]:sub(1, #detect[2]-1)
+				local run = require(game.ReplicatedStorage.functionReferences[scriptname])
+				run()
+			end
+		else
+			for letter in v:gmatch(".") do
+				table.insert(towrite,letter)
+			end
+		end
+		if towrite ~= nil and towrite ~= {} then
+			for i, letter in towrite do
+				rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[letter].x, font3[letter].y), Vector2.new(7, 16), function(ni)
+					ni.Parent = newf
+					ni.ImageColor3 = colour
+				end)
+				cx += (font3[letter].w - 1)
+			end
 		end
 	end
 	newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
@@ -128,10 +188,13 @@ module.createMenuBox = function(link, x, y, lengthofmiddlex, lengthofmiddley, im
 	return newf
 end
 
-module.dialogueBoxNoInp = function(font, txt, endable, y, txtbox, callback)
+module.dialogueBox = function(font, inps, prev, txt, endable, y, txtbox, callback)
+	local inputAllowed = inps
+	local PreviousTxt = prev
+	if PreviousTxt == nil then PreviousTxt = "" end
+	if inputAllowed == nil then inputAllowed = true end
 	local s, e = pcall(function()
 		local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
-		--inDialogue.Value = true
 		inputs.wipeAllFuncs()
 		local font3Height = fontrom.font3.height
 		local font3Width = fontrom.font3.width
@@ -145,191 +208,116 @@ module.dialogueBoxNoInp = function(font, txt, endable, y, txtbox, callback)
 		newf.AnchorPoint = Vector2.new(0,0)
 		newf.BackgroundTransparency = 1
 		newf.Name = txt
-		local scrollTxt = coroutine.create(function()
+		coroutine.resume(coroutine.create(function()
 			local cx = x
 			local cy = y
-			local str = txt:split(`\n`)
-			for i, v in ipairs(str) do
-				if v == "nw" then
-					cy += font3Height+1
-					cx = x
-				elseif v:sub(1,4) == "func" then
-					local str = v:sub(6, #v-1)
-					local func = require(game.ReplicatedStorage.functionReferences[str])
-					func(script)
-				else
-					rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
-						ni.Parent = newf
-						ni.ImageColor3 = clr
-					end)
-					cx+=font3[v].w -1
-				end
-
-				task.wait(fontrom.scrollspeeds[textspeed])
-			end
-			pcall(function()
-				if endable == false then
-					rendering.renderImgInBounds("/assets/fonts/down_arrow.png", cx+1, cy, 7, 16, Vector2.new(0,0), Vector2.new(0, 0), Vector2.new(8, 16), function(ni)
-						ni.Parent = newf
-						local a = 1
-						local b = {[1] = Vector2.new(0, 0),[2] = Vector2.new(0, 16),[3] = Vector2.new(0, 32),[4] = Vector2.new(0, 48)}
-						local anim = coroutine.create(function()
-							while wait(0.08) do
-								a+=1
-								if a > 4 then a = 1 end
-								ni.ImageRectOffset = b[a]
-							end
-						end)
-						coroutine.resume(anim)
-					end)
-					callback(newf, box)
-				else
-					callback(newf, box)
-				end
-			end)
-		end)
-		coroutine.resume(scrollTxt)
-		newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
-	end)
-	if e then error(e) end
-end
-
-module.dialogueBox = function(font, txt, endable, y, txtbox, callback)
-	local s, e = pcall(function()
-		local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
-		--inDialogue.Value = true
-		inputs.wipeAllFuncs()
-		local font3Height = fontrom.font3.height
-		local font3Width = fontrom.font3.width
-		local font3 = fontrom.font3.offsets
-		local box = module.createMenuBox("/assets/ui/"..txtbox..".png", 16, y-8, 24, 4, Color3.new(1,1,1)) --l = 208px
-		local x = 24
-		local clr = Color3.new(1,1,1)
-		local newf = Instance.new("Frame")
-		newf.Size = UDim2.new(1,0,1,0)
-		newf.Position = UDim2.new(0,0,0,0)
-		newf.AnchorPoint = Vector2.new(0,0)
-		newf.BackgroundTransparency = 1
-		newf.Name = txt
-		local scrollTxt = coroutine.create(function()
-			local cx = x
-			local cy = y
-			local str = txt:split(`\n`)
-			for i, v in ipairs(str) do
-				if v == "nw" then
-					cy += font3Height+1
-					cx = x
-				elseif v:sub(1,4) == "func" then
-					local str = v:sub(6, #v-1)
-					local func = require(game.ReplicatedStorage.functionReferences[str])
-					func(script)
-				else
-					rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
-						ni.Parent = newf
-						ni.ImageColor3 = clr
-					end)
-					cx+=font3[v].w -1
-				end
-				
-				if inputs.isKeyDown(ctrls.scheme1.cancel) or inputs.isKeyDown(ctrls.scheme1.interact) then
-					task.wait(fontrom.scrollspeeds["megascroll"])
-				else
-					task.wait(fontrom.scrollspeeds[textspeed])
-				end
-			end
-			pcall(function()
-				if endable == false then
-					rendering.renderImgInBounds("/assets/fonts/down_arrow.png", cx+1, cy, 7, 16, Vector2.new(0,0), Vector2.new(0, 0), Vector2.new(8, 16), function(ni)
-						ni.Parent = newf
-						local a = 1
-						local b = {[1] = Vector2.new(0, 0),[2] = Vector2.new(0, 16),[3] = Vector2.new(0, 32),[4] = Vector2.new(0, 48)}
-						local anim = coroutine.create(function()
-							while wait(0.08) do
-								a+=1
-								if a > 4 then a = 1 end
-								ni.ImageRectOffset = b[a]
-							end
-						end)
-						coroutine.resume(anim)
-					end)
-					local function advance()
-						rendering.playSFX("sel.wav")
-						callback(newf, box)
+			local sections = PreviousTxt:split("|")
+			for i, v in ipairs(sections) do
+				local towrite = {}
+				if v:sub(1,1) == "`" and v:sub(1,2) ~= "``" then
+					local code = v:sub(2, -1)
+					--letters
+					if code == "nw" then
+						cy += font3Height+1
+						cx = x
+					else
+						table.insert(towrite, code)
 					end
-					inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", advance, true)
-					inputs.assignKeyToFunc(ctrls.scheme1.cancel, "advancetxt", advance, true)
-				else
-					local function finish()
-						callback(newf, box)
+				elseif v:sub(1,2) == "``" then
+					local code = v:sub(3, -1)
+					--functions
+					if code:match("save") then
+						local path = v:sub(5,-1)
+						path:sub(1, #path-1)
+						local data = savefile.pullFromSaveData(path, "")
+						for letter in data:gmatch(".") do
+							table.insert(towrite,letter)
+						end
 					end
-					inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", finish, true)
-				end
-			end)
-		end)
-		coroutine.resume(scrollTxt)
-		newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
-	end)
-	if e then error(e) end
-end
-
-module.dialogueBoxWPrewrittenText = function(font, prevtxt, txt, endable, y, txtbox, callback)
-	local s, e = pcall(function()
-		local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
-		--inDialogue.Value = true
-		inputs.wipeAllFuncs()
-		local font3Height = fontrom.font3.height
-		local font3Width = fontrom.font3.width
-		local font3 = fontrom.font3.offsets
-		local box = module.createMenuBox("/assets/ui/"..txtbox..".png", 16, y-8, 24, 4, Color3.new(1,1,1)) --l = 208px
-		local x = 24
-		local clr = Color3.new(1,1,1)
-		local newf = Instance.new("Frame")
-		newf.Size = UDim2.new(1,0,1,0)
-		newf.Position = UDim2.new(0,0,0,0)
-		newf.AnchorPoint = Vector2.new(0,0)
-		newf.BackgroundTransparency = 1
-		newf.Name = txt
-		local scrollTxt = coroutine.create(function()
-			local cx = x
-			local cy = y
-			local str = prevtxt:split(`\n`)
-			for i, v in ipairs(str) do
-				if v == "nw" then
-					cy += font3Height+1
-					cx = x
-				elseif v:sub(1,4) == "func" then
-					local str = v:sub(6, #v-1)
-					local func = require(game.ReplicatedStorage.functionReferences[str])
-					func(script)
 				else
-					rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
-						ni.Parent = newf
-						ni.ImageColor3 = clr
-					end)
-					cx+=font3[v].w -1
+					for letter in v:gmatch(".") do
+						table.insert(towrite,letter)
+					end
+				end
+				if towrite ~= nil and towrite ~= {} then
+					for i, letter in towrite do
+						rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[letter].x, font3[letter].y), Vector2.new(7, 16), function(ni)
+							ni.Parent = newf
+							ni.ImageColor3 = clr
+						end)
+						cx += (font3[letter].w - 1)
+					end
 				end
 			end
-			local str = txt:split(`\n`)
-			for i, v in ipairs(str) do
-				if v == "nw" then
-					cy += font3Height+1
-					cx = x
-				elseif v:sub(1,4) == "func" then
-					local str = v:sub(6, #v-1)
-					local func = require(game.ReplicatedStorage.functionReferences[str])
-					func(script)
-				else
-					rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
-						ni.Parent = newf
-						ni.ImageColor3 = clr
-					end)
-					cx+=font3[v].w -1
-				end
+			-- actual typing
 
-				if inputs.isKeyDown(ctrls.scheme1.cancel) or inputs.isKeyDown(ctrls.scheme1.interact) then
-					task.wait(fontrom.scrollspeeds["megascroll"])
+
+
+
+
+
+
+
+			local sections = txt:split("|")
+			for i, v in ipairs(sections) do
+				local towrite = {}
+				if v:sub(1,1) == "`" and v:sub(1,2) ~= "``" then
+					local code = v:sub(2, -1)
+					--letters
+					if code == "nw" then
+						cy += font3Height+1
+						cx = x
+					else
+						table.insert(towrite, code)
+					end
+				elseif v:sub(1,2) == "``" then
+					local code = v:sub(3, -1)
+					--functions
+					if code:match("save") then
+						local path = v:sub(8,#v-1)
+						local data = savefile.pullFromSaveData(path, "")
+						for letter in data:gmatch(".") do
+							table.insert(towrite,letter)
+						end
+						print(towrite)
+					elseif code:match("func") then
+						--function, run now
+						local detect = code:split("(")
+						local scriptname = detect[2]:sub(1, #detect[2]-1)
+						table.insert(towrite, "func=>"..scriptname)
+					end
 				else
-					task.wait(fontrom.scrollspeeds[textspeed])
+					for letter in v:gmatch(".") do
+						table.insert(towrite,letter)
+					end
+				end
+				if towrite ~= nil and towrite ~= {} then
+					for i, letter in towrite do
+						if letter:sub(1,6) == "func=>" then
+							local s, e = pcall(function()
+								local scriptname = letter:sub(7, -1)
+								local run = require(game.ReplicatedStorage.functionReferences[scriptname])
+								run(script)
+							end)
+							if e then print(e) end
+						else
+							rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[letter].x, font3[letter].y), Vector2.new(7, 16), function(ni)
+								ni.Parent = newf
+								ni.ImageColor3 = clr
+							end)
+							cx += (font3[letter].w - 1)
+						end
+
+						if inputAllowed then
+							if inputs.isKeyDown(ctrls.scheme1.cancel) or inputs.isKeyDown(ctrls.scheme1.interact) then
+								task.wait(fontrom.scrollspeeds["megascroll"])
+							else
+								task.wait(fontrom.scrollspeeds[textspeed])
+							end
+						else
+							task.wait(fontrom.scrollspeeds[textspeed])
+						end
+					end
 				end
 			end
 			pcall(function()
@@ -347,25 +335,68 @@ module.dialogueBoxWPrewrittenText = function(font, prevtxt, txt, endable, y, txt
 						end)
 						coroutine.resume(anim)
 					end)
-					local function advance()
-						rendering.playSFX("sel.wav")
+					if inputAllowed then
+						local function advance()
+							rendering.playSFX("sel.wav")
+							callback(newf, box)
+						end
+						inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", advance, true)
+						inputs.assignKeyToFunc(ctrls.scheme1.cancel, "advancetxt", advance, true)
+					else
 						callback(newf, box)
 					end
-					inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", advance, true)
-					inputs.assignKeyToFunc(ctrls.scheme1.cancel, "advancetxt", advance, true)
 				else
-					local function finish()
+					if inputAllowed then
+						local function finish()
+							callback(newf, box)
+						end
+						inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", finish, true)
+					else
 						callback(newf, box)
 					end
-					inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", finish, true)
 				end
 			end)
-		end)
-		coroutine.resume(scrollTxt)
+		end))
 		newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
 	end)
 	if e then error(e) end
 end
 
+module.drawOutline = function(x, y, sizex, sizey, colour, callback)
+	local parentFrame = Instance.new("Frame")
+	parentFrame.Position = UDim2.new(0,0,0,0)
+	parentFrame.AnchorPoint = Vector2.new(0,0)
+	parentFrame.Size = UDim2.new(1,0,1,0)
+	parentFrame.BackgroundTransparency = 1
+	parentFrame.Parent = script.Parent.Parent.Parent.gry.loadedassets
+	
+	local leftSide = Instance.new("Frame")
+	leftSide.BackgroundColor3 = colour
+	leftSide.BorderSizePixel = 0
+	leftSide.Size = UDim2.new(1/maxX, 0, (sizey-3)/maxY, 0)
+	leftSide.Position = UDim2.new(x/maxX, 0, (y+1)/maxY, 0)
+	leftSide.Parent = parentFrame
+	
+	local rightSide = leftSide:Clone()
+	rightSide.Position += UDim2.new((sizex-2)/maxX, 0, 0, 0)
+	rightSide.Parent = parentFrame
+	
+	local topSide = Instance.new("Frame")
+	topSide.BackgroundColor3 = colour
+	topSide.BorderSizePixel = 0
+	topSide.Size = UDim2.new((sizex-3)/maxX, 0, 1/maxY, 0)
+	topSide.Position = UDim2.new((x+1)/maxX, 0, y/maxY, 0)
+	topSide.Parent = parentFrame
+	
+	local bottomSide = topSide:Clone()
+	bottomSide.Position += UDim2.new(0, 0, (sizey-2)/maxY, 0)
+	bottomSide.Parent = parentFrame
+	
+	pcall(function()
+		callback(parentFrame)
+	end)
+	
+	return parentFrame
+end
 
 return module
