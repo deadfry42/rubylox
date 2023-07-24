@@ -1,6 +1,7 @@
 --includes
 local pbu = require(game.ReplicatedStorage.patchbaseurl)
 local scenes = require(script.Engines.sceneEngine)
+local savefile = require(script.Engines.savingEngine)
 
 --services
 local cntp = game:GetService("ContentProvider")
@@ -24,6 +25,7 @@ local function playTheGame()
 	game.ReplicatedStorage["remote events (RARE!!!!)"]["gib welcome badge"]:FireServer()
 	print("Patch recognised! Correct version ("..versionPng:split(".")[1]..")")
 	print("Booting...")
+	savefile.refreshSlot0()
 	scenes.openscene("PreGame.CreditsBoot")
 	print("Successfully booted scene (PreGame.Movie1)!")
 end
