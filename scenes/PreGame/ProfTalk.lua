@@ -11,6 +11,8 @@ local folder = game.ReplicatedStorage.compileSettings
 local maxX = folder.maxX.Value
 local maxY = folder.maxY.Value
 
+local twns = game:GetService("TweenService")
+
 local tlp
 local blp
 local trp
@@ -61,23 +63,22 @@ proftalk.run = function()
 	wait(1.25)
 	local txtbox = savefile.pullFromSaveData("options.txtbx", 1)
 	local y = maxY-46
-	engine.dialogueBox("font3_dark", dialogue.birch.a, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-		engine.dialogueBox("font3_dark", dialogue.birch.b, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-			engine.dialogueBox("font3_dark", dialogue.birch.c, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-				engine.dialogueBox("font3_dark", dialogue.birch.d, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-					engine.dialogueBox("font3_dark", dialogue.birch.e, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-						engine.dialogueBox("font3_dark", dialogue.birch.f, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-							engine.dialogueBox("font3_dark", dialogue.birch.g, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-								engine.dialogueBoxWPrewrittenText("font3_dark", dialogue.birch.g:split("nw\n")[2], dialogue.birch.h, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-									engine.dialogueBox("font3_dark", dialogue.birch.i, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-										engine.dialogueBox("font3_dark", dialogue.birch.j, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-											engine.dialogueBox("font3_dark", dialogue.birch.k, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-												engine.dialogueBox("font3_dark", dialogue.birch.l, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-													engine.dialogueBoxWPrewrittenText("font3_dark", dialogue.birch.l:split("nw\n")[2], dialogue.birch.m, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-														engine.dialogueBoxNoInp("font3_dark", dialogue.birch.n, true, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-															engine.dialogueBoxNoInp("font3_dark", dialogue.birch.o, true, y, txtbox, function(newf, bx)
-																inputs.wipeAllFuncs()
-															end)
+	engine.dialogueBox("font3_dark", true, "", dialogue.birch.a, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+		engine.dialogueBox("font3_dark", true, "", dialogue.birch.b, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+			engine.dialogueBox("font3_dark", true, "", dialogue.birch.c, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+				engine.dialogueBox("font3_dark", true, "", dialogue.birch.d, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+					engine.dialogueBox("font3_dark", true, "", dialogue.birch.e, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+						engine.dialogueBox("font3_dark", true, "", dialogue.birch.f, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+							engine.dialogueBox("font3_dark", true, "", dialogue.birch.g, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+								engine.dialogueBox("font3_dark", true, dialogue.birch.g:split("|`nw|")[2], dialogue.birch.h, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+									engine.dialogueBox("font3_dark", true, "", dialogue.birch.i, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+										engine.dialogueBox("font3_dark", true, "", dialogue.birch.j, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+											engine.dialogueBox("font3_dark", true, "", dialogue.birch.k, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+												engine.dialogueBox("font3_dark", true, "", dialogue.birch.l, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+													engine.dialogueBox("font3_dark", true, dialogue.birch.l:split("|`nw|")[2], dialogue.birch.m, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+														engine.dialogueBox("font3_dark", false, "", dialogue.birch.n, true, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+															inputs.wipeAllFuncs()
+															scenes.openscene("ProfTalkSections.GenderChoose")
 														end)
 													end)
 												end)
