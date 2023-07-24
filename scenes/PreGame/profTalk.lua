@@ -1,4 +1,4 @@
-local movie1 = {}
+local proftalk = {}
 local pbu = require(game.ReplicatedStorage.patchbaseurl)
 local inputs = require(script.Parent.Parent.Parent.Engines.inputEngine)
 local scenes = require(script.Parent.Parent.Parent.Engines.sceneEngine)
@@ -10,7 +10,14 @@ local dialogue = require(game.ReplicatedStorage.talkscript)
 local folder = game.ReplicatedStorage.compileSettings
 local maxX = folder.maxX.Value
 local maxY = folder.maxY.Value
-movie1.run = function()
+
+local tlp
+local blp
+local trp
+local brp
+local bir
+local azur
+proftalk.run = function()
 	local newsound = Instance.new("Sound")
 	newsound.Volume = 1
 
@@ -36,11 +43,12 @@ movie1.run = function()
 	--1/4 = 64*16
 	local top = maxY/2+10
 	local left = maxX/2
-	local tlp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(1,1), Vector2.new(0, 8), Vector2.new(64, 16), function(ni) ni.ImageTransparency = 1 end)
-	local blp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(1,0), Vector2.new(64, 8), Vector2.new(64, 16), function(ni) ni.ImageTransparency = 1 end)
-	local trp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(0,1), Vector2.new(64, 8), Vector2.new(-64, 16), function(ni) ni.ImageTransparency = 1 end)
-	local brp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(0,0), Vector2.new(128, 8), Vector2.new(-64, 16), function(ni) ni.ImageTransparency = 1 end)
-	local bir = rendering.renderImg("/assets/prenewgame/birch.png", left, top-1, 64, 64, Vector2.new(.31,.95), function(ni) ni.ImageTransparency = 1 end)
+	tlp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(1,1), Vector2.new(0, 8), Vector2.new(64, 16), function(ni) ni.ImageTransparency = 1 end)
+	blp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(1,0), Vector2.new(64, 8), Vector2.new(64, 16), function(ni) ni.ImageTransparency = 1 end)
+	trp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(0,1), Vector2.new(64, 8), Vector2.new(-64, 16), function(ni) ni.ImageTransparency = 1 end)
+	brp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(0,0), Vector2.new(128, 8), Vector2.new(-64, 16), function(ni) ni.ImageTransparency = 1 end)
+	bir = rendering.renderImg("/assets/prenewgame/birch.png", left, top-1, 64, 64, Vector2.new(.31,.95), function(ni) ni.ImageTransparency = 1 end)
+	azur = rendering.renderImg("/assets/creatures/front/298.png", 0, 0, 0, 0,Vector2.new(0,0), function(ni) ni.ImageTransparency = 1 end)
 	
 	for i=1, 10 do
 		tlp.ImageTransparency-= .1
@@ -50,7 +58,7 @@ movie1.run = function()
 		bir.ImageTransparency-= .1
 		wait(.25)
 	end
-	wait(1)
+	wait(1.25)
 	local txtbox = savefile.pullFromSaveData("options.txtbx", 1)
 	local y = maxY-46
 	engine.dialogueBox("font3_dark", dialogue.birch.a, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
@@ -86,4 +94,8 @@ movie1.run = function()
 	end)
 end
 
-return movie1
+proftalk.retrieveAssets = function()
+	return {tlp, blp, trp, brp, bir, azur}
+end
+
+return proftalk
