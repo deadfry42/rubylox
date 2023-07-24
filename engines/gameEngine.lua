@@ -128,6 +128,72 @@ module.createMenuBox = function(link, x, y, lengthofmiddlex, lengthofmiddley, im
 	return newf
 end
 
+module.dialogueBoxNoInp = function(font, txt, endable, y, txtbox, callback)
+	local s, e = pcall(function()
+		local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
+		--inDialogue.Value = true
+		inputs.wipeAllFuncs()
+		local font3Height = fontrom.font3.height
+		local font3Width = fontrom.font3.width
+		local font3 = fontrom.font3.offsets
+		local box = module.createMenuBox("/assets/ui/"..txtbox..".png", 16, y-8, 24, 4, Color3.new(1,1,1)) --l = 208px
+		local x = 24
+		local clr = Color3.new(1,1,1)
+		local newf = Instance.new("Frame")
+		newf.Size = UDim2.new(1,0,1,0)
+		newf.Position = UDim2.new(0,0,0,0)
+		newf.AnchorPoint = Vector2.new(0,0)
+		newf.BackgroundTransparency = 1
+		newf.Name = txt
+		local scrollTxt = coroutine.create(function()
+			local cx = x
+			local cy = y
+			local str = txt:split(`\n`)
+			for i, v in ipairs(str) do
+				if v == "nw" then
+					cy += font3Height+1
+					cx = x
+				elseif v:sub(1,4) == "func" then
+					local str = v:sub(6, #v-1)
+					local func = require(game.ReplicatedStorage.functionReferences[str])
+					func(script)
+				else
+					rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+						ni.Parent = newf
+						ni.ImageColor3 = clr
+					end)
+					cx+=font3[v].w -1
+				end
+
+				task.wait(fontrom.scrollspeeds[textspeed])
+			end
+			pcall(function()
+				if endable == false then
+					rendering.renderImgInBounds("/assets/fonts/down_arrow.png", cx+1, cy, 7, 16, Vector2.new(0,0), Vector2.new(0, 0), Vector2.new(8, 16), function(ni)
+						ni.Parent = newf
+						local a = 1
+						local b = {[1] = Vector2.new(0, 0),[2] = Vector2.new(0, 16),[3] = Vector2.new(0, 32),[4] = Vector2.new(0, 48)}
+						local anim = coroutine.create(function()
+							while wait(0.08) do
+								a+=1
+								if a > 4 then a = 1 end
+								ni.ImageRectOffset = b[a]
+							end
+						end)
+						coroutine.resume(anim)
+					end)
+					callback(newf, box)
+				else
+					callback(newf, box)
+				end
+			end)
+		end)
+		coroutine.resume(scrollTxt)
+		newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
+	end)
+	if e then error(e) end
+end
+
 module.dialogueBox = function(font, txt, endable, y, txtbox, callback)
 	local s, e = pcall(function()
 		local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
@@ -205,5 +271,101 @@ module.dialogueBox = function(font, txt, endable, y, txtbox, callback)
 	end)
 	if e then error(e) end
 end
+
+module.dialogueBoxWPrewrittenText = function(font, prevtxt, txt, endable, y, txtbox, callback)
+	local s, e = pcall(function()
+		local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
+		--inDialogue.Value = true
+		inputs.wipeAllFuncs()
+		local font3Height = fontrom.font3.height
+		local font3Width = fontrom.font3.width
+		local font3 = fontrom.font3.offsets
+		local box = module.createMenuBox("/assets/ui/"..txtbox..".png", 16, y-8, 24, 4, Color3.new(1,1,1)) --l = 208px
+		local x = 24
+		local clr = Color3.new(1,1,1)
+		local newf = Instance.new("Frame")
+		newf.Size = UDim2.new(1,0,1,0)
+		newf.Position = UDim2.new(0,0,0,0)
+		newf.AnchorPoint = Vector2.new(0,0)
+		newf.BackgroundTransparency = 1
+		newf.Name = txt
+		local scrollTxt = coroutine.create(function()
+			local cx = x
+			local cy = y
+			local str = prevtxt:split(`\n`)
+			for i, v in ipairs(str) do
+				if v == "nw" then
+					cy += font3Height+1
+					cx = x
+				elseif v:sub(1,4) == "func" then
+					local str = v:sub(6, #v-1)
+					local func = require(game.ReplicatedStorage.functionReferences[str])
+					func(script)
+				else
+					rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+						ni.Parent = newf
+						ni.ImageColor3 = clr
+					end)
+					cx+=font3[v].w -1
+				end
+			end
+			local str = txt:split(`\n`)
+			for i, v in ipairs(str) do
+				if v == "nw" then
+					cy += font3Height+1
+					cx = x
+				elseif v:sub(1,4) == "func" then
+					local str = v:sub(6, #v-1)
+					local func = require(game.ReplicatedStorage.functionReferences[str])
+					func(script)
+				else
+					rendering.renderImgInBounds("/assets/fonts/"..font..".png", cx, cy, 7, 16, Vector2.new(0,0), Vector2.new(font3[v].x, font3[v].y), Vector2.new(7, 16), function(ni)
+						ni.Parent = newf
+						ni.ImageColor3 = clr
+					end)
+					cx+=font3[v].w -1
+				end
+
+				if inputs.isKeyDown(ctrls.scheme1.cancel) or inputs.isKeyDown(ctrls.scheme1.interact) then
+					task.wait(fontrom.scrollspeeds["megascroll"])
+				else
+					task.wait(fontrom.scrollspeeds[textspeed])
+				end
+			end
+			pcall(function()
+				if endable == false then
+					rendering.renderImgInBounds("/assets/fonts/down_arrow.png", cx+1, cy, 7, 16, Vector2.new(0,0), Vector2.new(0, 0), Vector2.new(8, 16), function(ni)
+						ni.Parent = newf
+						local a = 1
+						local b = {[1] = Vector2.new(0, 0),[2] = Vector2.new(0, 16),[3] = Vector2.new(0, 32),[4] = Vector2.new(0, 48)}
+						local anim = coroutine.create(function()
+							while wait(0.08) do
+								a+=1
+								if a > 4 then a = 1 end
+								ni.ImageRectOffset = b[a]
+							end
+						end)
+						coroutine.resume(anim)
+					end)
+					local function advance()
+						rendering.playSFX("sel.wav")
+						callback(newf, box)
+					end
+					inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", advance, true)
+					inputs.assignKeyToFunc(ctrls.scheme1.cancel, "advancetxt", advance, true)
+				else
+					local function finish()
+						callback(newf, box)
+					end
+					inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", finish, true)
+				end
+			end)
+		end)
+		coroutine.resume(scrollTxt)
+		newf.Parent = script.Parent.Parent.Parent.gry.loadedassets
+	end)
+	if e then error(e) end
+end
+
 
 return module
