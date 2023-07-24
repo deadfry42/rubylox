@@ -15,7 +15,7 @@ movie1.run = function()
 	newsound.Volume = 1
 
 	newsound.SoundId = pbu.."/music/4.mp3"
-	newsound.Parent = game.Players.LocalPlayer.PlayerGui
+	newsound.Parent = game.Players.LocalPlayer.PlayerGui.gameplay
 	newsound:Play()
 	newsound.Looped = true
 	
@@ -34,13 +34,13 @@ movie1.run = function()
 	print("fade in prof")
 	--fade clk=10, very slow
 	--1/4 = 64*16
-	local top = maxY/2+9
+	local top = maxY/2+10
 	local left = maxX/2
 	local tlp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(1,1), Vector2.new(0, 8), Vector2.new(64, 16), function(ni) ni.ImageTransparency = 1 end)
 	local blp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(1,0), Vector2.new(64, 8), Vector2.new(64, 16), function(ni) ni.ImageTransparency = 1 end)
 	local trp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(0,1), Vector2.new(64, 8), Vector2.new(-64, 16), function(ni) ni.ImageTransparency = 1 end)
 	local brp = rendering.renderImgInBounds("/assets/prenewgame/shadow.png", left, top, 64, 16, Vector2.new(0,0), Vector2.new(128, 8), Vector2.new(-64, 16), function(ni) ni.ImageTransparency = 1 end)
-	local bir = rendering.renderImg("/assets/prenewgame/birch.png", left, top, 64, 64, Vector2.new(.31,.95), function(ni) ni.ImageTransparency = 1 end)
+	local bir = rendering.renderImg("/assets/prenewgame/birch.png", left, top-1, 64, 64, Vector2.new(.31,.95), function(ni) ni.ImageTransparency = 1 end)
 	
 	for i=1, 10 do
 		tlp.ImageTransparency-= .1
@@ -58,7 +58,27 @@ movie1.run = function()
 			engine.dialogueBox("font3_dark", dialogue.birch.c, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
 				engine.dialogueBox("font3_dark", dialogue.birch.d, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
 					engine.dialogueBox("font3_dark", dialogue.birch.e, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
-						
+						engine.dialogueBox("font3_dark", dialogue.birch.f, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+							engine.dialogueBox("font3_dark", dialogue.birch.g, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+								engine.dialogueBoxWPrewrittenText("font3_dark", dialogue.birch.g:split("nw\n")[2], dialogue.birch.h, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+									engine.dialogueBox("font3_dark", dialogue.birch.i, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+										engine.dialogueBox("font3_dark", dialogue.birch.j, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+											engine.dialogueBox("font3_dark", dialogue.birch.k, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+												engine.dialogueBox("font3_dark", dialogue.birch.l, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+													engine.dialogueBoxWPrewrittenText("font3_dark", dialogue.birch.l:split("nw\n")[2], dialogue.birch.m, false, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+														engine.dialogueBoxNoInp("font3_dark", dialogue.birch.n, true, y, txtbox, function(newf, bx) newf:Destroy() bx:Destroy()
+															engine.dialogueBoxNoInp("font3_dark", dialogue.birch.o, true, y, txtbox, function(newf, bx)
+																inputs.wipeAllFuncs()
+															end)
+														end)
+													end)
+												end)
+											end)
+										end)
+									end)
+								end)
+							end)
+						end)
 					end)
 				end)
 			end)
