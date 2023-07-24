@@ -22,7 +22,10 @@ things to fix (at a later date):
 
 local function playTheGame()
 	game.ReplicatedStorage["remote events (RARE!!!!)"]["gib welcome badge"]:FireServer()
+	print("Patch recognised! Correct version ("..versionPng:split(".")[1]..")")
+	print("Booting...")
 	scenes.openscene("PreGame.CreditsBoot")
+	print("Successfully booted scene (PreGame.Movie1)!")
 end
 
 cntp:PreloadAsync({pbu.."/confirmation/has_patch.png"}, function(assetID, assetwhatevermajiggy) 
