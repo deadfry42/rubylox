@@ -19,28 +19,21 @@ local brendan
 local may
 
 genderchoose.run = function()
-	local prevAssets = require(script.Parent.Parent.PreGame.ProfTalk).retrieveAssets()
-	local tlp = prevAssets[1]
-	local blp = prevAssets[2]
-	local trp = prevAssets[3]
-	local brp = prevAssets[4]
-	local bir = prevAssets[5]
-	local azur = prevAssets[6]
 	local prevAssets1 = require(script.Parent.GenderChoose).retrieveAssets()
-	local brendan = prevAssets1[1]
-	local may = prevAssets1[2]
 	local gender = prevAssets1[3]
 	local txtbox = savefile.pullFromSaveData("options.txtbx", 1)
 	local y = maxY-46
 	engine.dialogueBox("font3_dark", false, "", dialogue.birch.p, true, y, txtbox, function(a, b)
 		inputs.wipeAllFuncs()
 		local namesM = {
+			"NEW NAME",
 			"LANDON",
 			"TERRY",
 			"SETH",
 			"TOM"
 		}
 		local namesF = {
+			"NEW NAME",
 			"TERRA",
 			"KIMMY",
 			"NICOLA",
@@ -48,6 +41,19 @@ genderchoose.run = function()
 		}
 		local names = namesM
 		if gender == true then names = namesF end
+		engine.getOptionFromMenu(16, 8, 9, true, true, names, function(selection) --accept
+			if selection <= 1 then
+				
+			end
+			local name = names[selection]
+			savefile.saveData(0, "trainer.name", name, names[2])
+			scenes.openscene("ProfTalkSections.ConfirmName")
+			a:Destroy()
+			b:Destroy()
+		end, function() --cancel
+			scenes.openscene("ProfTalkSections.GenderChoose")
+		end)
+		--[[
 		local namesMenu = engine.createMenuBox("/assets/ui/"..txtbox..".png", 16, 8, 9, 10, Color3.new(1,1,1))
 		local newnametxt = engine.drawText("font3_dark", "NEW NAME", 24, 16, Color3.new(1,1,1))
 		local option1 = engine.drawText("font3_dark", names[1], 24, 32, Color3.new(1,1,1))
@@ -122,6 +128,7 @@ genderchoose.run = function()
 			removeMenu()
 			scenes.openscene("ProfTalkSections.GenderChoose")
 		end, false)
+		]]
 	end)
 end
 
