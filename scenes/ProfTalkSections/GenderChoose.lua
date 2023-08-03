@@ -42,7 +42,7 @@ genderchoose.run = function()
 		local girltxt = engine.drawText("font3_dark", "GIRL", 24, 56, Color3.new(1,1,1))
 		local selBoy = engine.drawOutline(23, 40, 43, 17, Color3.new(1, 0.388235, 0.352941), function(no) no.Visible = false end)
 		local selGirl = engine.drawOutline(23, 56, 43, 17, Color3.new(1, 0.388235, 0.352941), function(no) no.Visible = false end)
-
+		
 		local debounce = false
 
 		local gIn = {}
@@ -106,13 +106,13 @@ genderchoose.run = function()
 			if selected == 2 then selected = true else selected = false end
 			rendering.playSFX("sel.wav")
 			savefile.saveData(0, "trainer.gender", selected, false)
-			box:Destroy()
 			selBoy:Destroy()
 			selGirl:Destroy()
 			boytxt:Destroy()
 			girltxt:Destroy()
 			newf:Destroy()
 			box:Destroy()
+			bx:Destroy()
 			scenes.openscene("ProfTalkSections.NameChoose")
 		end, true)
 	end)
