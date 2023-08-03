@@ -13,7 +13,9 @@ I am always learning throughout this project, so things will be inconsistent.
  - In the next section, I will talk about how the game's assets are going to be stored. I need to first say that if you get ahold of any patch that contains any '_MACOSX' folder, or any other folder relating to unix, that is because my main computers as of now are unix systems. Final releases should have this removed, but if you see any folder like this, just remove it. It's just there to help MACOSX keep folders in a certain position (i think)
 
 ## Game link
-The game may be moved from my group to my profile in the future, so if you'd like to join, please go to the github wiki and go to official sites & pages.
+I've recently moved the game to my profile, so all updates will go there.
+IF you'd like to play (which you can't), you can join at the game link provided in the wiki. The wiki page is always up to date so it's simply the best place to put it.
+
 Please note that the game is unplayable. Literately. I've added a badge which you can only get for successfully loading the game with an unreleased patch, and even if you do, there isn't much to do other than look at my work. If you'd like to look at my work without trying to reverse engineer a patch, you can join the discord server, which is also in the wiki, where i'll upload screenshots of my work when I feel like it's ready enough.
 
 ## Assets:
