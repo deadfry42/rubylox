@@ -30,6 +30,14 @@ module.isKeyDown = function(key)
 	return uis:IsKeyDown(key)
 end
 
+module.pullInputMap = function()
+	return maps
+end
+
+module.restoreInputs = function(map)
+	maps = map
+end
+
 uis.InputBegan:Connect(function(inp, gpe)
 	if gpe == false then
 		local key = inp.KeyCode
