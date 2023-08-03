@@ -44,12 +44,15 @@ module.refreshSlot0 = function()
 	pcall(function()
 		if game.Players.LocalPlayer:FindFirstChild("save") then
 			game.Players.LocalPlayer:FindFirstChild("save"):Destroy()
-			if game.Players.LocalPlayer:FindFirstChild("datastore") then
-				local replacer = game.Players.LocalPlayer:FindFirstChild("datastore")
-				local replacement = replacer:Clone()
+		end
+	end)
+	pcall(function()
+		if game.Players.LocalPlayer:FindFirstChild("datastore") then
+			local replacer = game.Players.LocalPlayer:FindFirstChild("datastore")
+			local replacement = replacer:Clone()
 
-				replacement.Name = "save"
-			end
+			replacement.Name = "save"
+			replacement.Parent = game.Players.LocalPlayer
 		end
 	end)
 end
