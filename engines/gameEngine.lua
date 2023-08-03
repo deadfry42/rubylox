@@ -189,13 +189,14 @@ module.createMenuBox = function(link, x, y, lengthofmiddlex, lengthofmiddley, im
 end
 
 module.dialogueBox = function(font, inps, prev, txt, endable, y, txtbox, callback)
+	local storecurrentinps = inputs.pullInputMap()
+	inputs.wipeAllFuncs()
 	local inputAllowed = inps
 	local PreviousTxt = prev
 	if PreviousTxt == nil then PreviousTxt = "" end
 	if inputAllowed == nil then inputAllowed = true end
 	local s, e = pcall(function()
 		local textspeed = savefile.pullFromSaveData("options.txtspd", defaultScrollSpeed) 
-		inputs.wipeAllFuncs()
 		local font3Height = fontrom.font3.height
 		local font3Width = fontrom.font3.width
 		local font3 = fontrom.font3.offsets
@@ -208,6 +209,7 @@ module.dialogueBox = function(font, inps, prev, txt, endable, y, txtbox, callbac
 		newf.AnchorPoint = Vector2.new(0,0)
 		newf.BackgroundTransparency = 1
 		newf.Name = txt
+		newf.ZIndex = 5
 		coroutine.resume(coroutine.create(function()
 			local cx = x
 			local cy = y
@@ -338,20 +340,24 @@ module.dialogueBox = function(font, inps, prev, txt, endable, y, txtbox, callbac
 					if inputAllowed then
 						local function advance()
 							rendering.playSFX("sel.wav")
+							inputs.restoreInputs(storecurrentinps)
 							callback(newf, box)
 						end
 						inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", advance, true)
 						inputs.assignKeyToFunc(ctrls.scheme1.cancel, "advancetxt", advance, true)
 					else
+						inputs.restoreInputs(storecurrentinps)
 						callback(newf, box)
 					end
 				else
 					if inputAllowed then
 						local function finish()
+							inputs.restoreInputs(storecurrentinps)
 							callback(newf, box)
 						end
 						inputs.assignKeyToFunc(ctrls.scheme1.interact, "advancetxt", finish, true)
 					else
+						inputs.restoreInputs(storecurrentinps)
 						callback(newf, box)
 					end
 				end
@@ -397,6 +403,82 @@ module.drawOutline = function(x, y, sizex, sizey, colour, callback)
 	end)
 	
 	return parentFrame
+end
+
+module.getOptionFromMenu = function(x, y, lengthofmiddlex, selectionLoop, cancellable, options, callback, cancelcallback) --example - 0, 0, 10, {"a", "b"}
+	local s, e = pcall(function()
+		--agree to the eula that inputs will be eaten LMAO!!!
+		local storecurrentinps = inputs.pullInputMap()
+		inputs.wipeAllFuncs()
+		local txtbox = savefile.pullFromSaveData("options.txtbx", 1)
+		local newBox = module.createMenuBox("/assets/ui/"..txtbox..".png", x, y, lengthofmiddlex, #options*2, Color3.new(1,1,1))
+		x+=8
+		y+=8
+		newBox.Parent = script.Parent.Parent.Parent.gry.loadedassets
+		local texts = {}
+		local cy = y
+		for i, v in ipairs(options) do
+			local newtext = module.drawText("font3_dark", v, x, cy, Color3.new(1,1,1))
+			newtext.Parent = newBox
+			table.insert(texts, newtext)
+			cy+=16
+		end
+		local selection = 1
+		local outline = module.drawOutline(x-1, (y)+((selection-1)*16), lengthofmiddlex*8, 17, Color3.new(1, 0.388235, 0.352941))
+		local function updateOutlinePos()
+			rendering.playSFX("sel.wav")
+			outline:Destroy()
+			outline = module.drawOutline(x-1, (y)+((selection-1)*16), lengthofmiddlex*8, 17, Color3.new(1, 0.388235, 0.352941))
+		end
+		local function destroyMenu()
+			for i, v in ipairs(texts) do
+				v:Destroy()
+			end
+			newBox:Destroy()
+			outline:Destroy()
+		end
+		local function sel()
+			rendering.playSFX("sel.wav")
+			inputs.restoreInputs(storecurrentinps)
+			destroyMenu()
+			callback(selection)
+		end
+		local min = 1
+		local max = #options
+		local function changeSelection(up)
+			if up then
+				selection-=1
+				if selection < min then
+					if selectionLoop then
+						selection = max
+					else
+						selection+=1
+					end
+				end
+				updateOutlinePos()
+			else
+				selection+=1
+				if selection > max then
+					if selectionLoop then
+						selection = min
+					else
+						selection-=1
+					end
+				end
+				updateOutlinePos()
+			end
+		end
+		inputs.assignKeyToFunc(ctrls.scheme1.up, "scrollInMenu", function() changeSelection(true) end, false)
+		inputs.assignKeyToFunc(ctrls.scheme1.down, "scrollInMenu", function() changeSelection(false) end, false)
+		inputs.assignKeyToFunc(ctrls.scheme1.interact, "selInMenu", sel, false)
+		inputs.assignKeyToFunc(ctrls.scheme1.cancel, "cancelMenu", function()
+			inputs.restoreInputs(storecurrentinps)
+			rendering.playSFX("sel.wav")
+			destroyMenu()
+			cancelcallback()
+		end, false)
+	end)
+	if e then print(e) end
 end
 
 return module
