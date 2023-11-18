@@ -18,10 +18,10 @@ I am always learning throughout this project, so things will be inconsistent.
 I've recently moved the game to my profile, so all updates will go there.
 IF you'd like to play (which you can't), you can join at the game link provided in the wiki. The wiki page is always up to date so it's simply the best place to put it.
 
-Please note that the game is unplayable. Literately. I've added a badge which you can only get for successfully loading the game with an unreleased patch, and even if you do, there isn't much to do other than look at my work. If you'd like to look at my work without trying to reverse engineer a patch, you can join the discord server, which is also in the wiki, where i'll upload screenshots of my work when I feel like it's ready enough.
+Please note that the game is unplayable. Literately. I've added a badge which you can only get for successfully loading the game with a patch, and even if you do, there isn't much to do other than look at my work. If you'd like to look at my work without installing anything, you can join the discord server, which is also in the wiki, where i'll upload screenshots of my work when I feel like it's ready enough.
 
 ## Assets:
-This game will require installing a patch to the Roblox internal game files. This process will differ between Windows & Mac, but there are tutorials on how to in the discord below.
+This game will require installing a patch to the Roblox internal game files. This process will differ between Windows, Mac and Linux, but there are tutorials on how to in the discord below.
 The reason you need to install a patch is because this is the way I am trying to get past copyright. All of the copyrighted assets are not hosted on Roblox and instead in the patch, which makes the assets unnaccesible for regular users. Therefore, because the assets are NOT stored anywhere within the game code, I am essentially (theoretically) voiding copyright.
 
  - If I ever get a takedown request from TPCi, or if roblox takes it down, I will keep it that way. Unfortunately, I don't want to ever be sued (sorry to dissapoint)
