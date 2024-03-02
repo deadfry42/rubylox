@@ -43,5 +43,5 @@ There will not be any monetization for the game. This is because the game is lit
 
 
 # request
-pls add linux support to roblox - it would make my life 1000 times easier
-ik vinegar exists, but its far too buggy to be considered usable
+rol is dead :sob:  
+please make rol alive pretty please
