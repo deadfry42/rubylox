@@ -1,5 +1,9 @@
 # rubylox
 Recreating Pokemon Ruby to the Roblox game engine (engine only, no ROM)  
+
+**This project is pretty much abandoned. This is due to roblox's engine being lackluster.**  
+(i might try again with editable images, but roblox *just* blocked wine, so I cannot develop on my main machine.   
+  
 ***EXTREMELY INCOMPLETE*** (<1000 lines as of writing)
 
 ## Notes & Warnings:
